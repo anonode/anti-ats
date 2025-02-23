@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anti-ATS</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f9;
+        }
+        .navbar {
+            background-color: #1a2533;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar img {
+            height: 50px;
+        }
+        .navbar-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 16px;
+            padding: 8px 12px;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .navbar-links a:hover {
+            background-color: white;
+            color: #1a2533;
+        }
+        .upload-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 40px;
+        }
+        .upload-box {
+            border: 2px dashed #1a2533;
+            padding: 30px;
+            width: 50%;
+            background-color: white;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .custom-file-upload {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #1a2533;
+            color: white;
+            font-size: 18px;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 80%;
+            margin: 0 auto;
+        }
+        .upload-icon {
+            height: 24px;
+            margin-right: 10px;
+        }
+        .dropdown-icon {
+            margin-left: 10px;
+        }
+        #file-upload {
+            display: none;
+        }
+        .file-size-text {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+        /* Submit button styling */
+        .submit-container {
+            text-align: center; /* Centers the button */
+            margin-top: 20px;
+        }
+        #submit-btn {
+            display: none;
+            background-color: #23395d;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-left: auto;
+            margin-right: auto;
+            
+        }
+        #submit-btn:hover {
+            background-color: #1a2533;
+        }
+        .how-it-works {
+            margin-top: 40px;
+            background-color: white;
+            padding: 30px;
+            width: 50%;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            display: inline-block;
+        }
+        .how-it-works h3 {
+            color: #1a2533;
+            text-align: center;
+        }
+        .how-it-works ol {
+            padding-left: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            background-color: #1a2533;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Anti-ATS Logo">
+        <div class="navbar-links">
+            <a href="#">FAQs</a>
+            <a href="#">How it works</a>
+            <a href="{{ url_for('register') }}">Sign up</a>
+            <a href="{{ url_for('login') }}">Login</a>
+        </div>
+    </div>
+
+    <div class="upload-container">
+        <div class="upload-box">
+            <form method="POST" enctype="multipart/form-data" id="upload-form">
+                <label for="file-upload" class="custom-file-upload">
+                    <img src="{{ url_for('static', filename='paper-icon.png') }}" alt="Upload Icon" class="upload-icon">
+                    Choose Files
+                    <span class="dropdown-icon">▼</span>
+                </label>
+                <input id="file-upload" type="file" name="file" onchange="showSubmitButton()">
+                <p class="file-size-text">Max File Size: 1GB</p>
+
+                <div class="submit-container">
+                    <button type="submit" id="submit-btn">Submit</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="how-it-works">
+            <h3>How it Works</h3>
+            <ol>
+                <li>Upload your resume.</li>
+                <li>The system scans for ATS compatibility.</li>
+                <li>Check formatting and keyword optimization.</li>
+                <li>Receive a report on ATS friendliness.</li>
+                <li>Make adjustments and re-upload.</li>
+                <li>Increase chances of passing ATS filters.</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Software Engineering © 2025</p>
+    </div>
+
+    <script>
+        function showSubmitButton() {
+            var submitBtn = document.getElementById("submit-btn");
+            submitBtn.style.display = "block";
+        }
+    </script>
+
+</body>
+</html>
