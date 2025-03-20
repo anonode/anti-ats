@@ -1,7 +1,7 @@
 # Necessary imports and installs to run code below.
 
 Python Packages:
-pip install docx2txt, PyMuPDF, nltk, spacy
+pip install docx2txt PyMuPDF nltk spacy
 
 Spacy Model
 python -m spacy download en_core_web_md
