@@ -10,7 +10,7 @@ import spacy
 class TextPreprocessor:
     def __init__(self):
         self.stop_words = frozenset(stopwords.words('english'))
-        self.nlp = spacy.load("en_core_web_md")
+        self.nlp = spacy.load("en_core_web_md") # might need to switch to large model instead for proper word vectors
         
     @lru_cache(maxsize=128) # Used to speed up performance (if same text is processed multiple times) by caching results for up to n unique inputs 
     def pptxt(self, text: str) -> str: # Pre-process txt WITHOUT stemming (Stemming negatively effects keywords)
@@ -53,7 +53,7 @@ class DocumentParser:
             raise ValueError(f"Failed to process PDF file: {str(e)}")
 
     @staticmethod
-    def extract_docx_txt(file_path: str) -> str:
+    def extractDocx(file_path: str) -> str:
         try:
             return docx2txt.process(file_path)
         except Exception as e:
@@ -63,6 +63,12 @@ class KeywordExtractor:
     def __init__(self, preprocessor: TextPreprocessor):
         self.preprocessor = preprocessor
         self.cache: dict[str, dict[str, float]] = {} # Cache to help with repeated calls 
+
+    # Helper function that probably needs some work but currently it makes it to where we dont have stupid long sentences for no reason
+    def isSentence(self, phrase: str) -> bool:
+        if len(phrase.split()) > 6 or phrase.endswith(('.', '!', '?')):
+            return True
+        return False
         
     def extract_keywords(self, text: str) -> dict[str, float]:
         if text in self.cache:
@@ -76,7 +82,10 @@ class KeywordExtractor:
         # Process nouns to look for multi-word phrases (i.e software engineering, machine learning)
         for chunk in doc.noun_chunks:
             phrase = chunk.text.lower()
-            keywords[phrase] = keywords.get(phrase, 0) + 1
+
+            if len(phrase.split()) > 1 and not phrase.endswith('.'): # this is kinda a monkey version of solving this issue needs change for sure
+                if not self.isSentence(phrase): 
+                    keywords[phrase] = keywords.get(phrase, 0) + 1
         
         # Check each token for its relevancy and increments a counter for each relevant token
         for token in doc:
@@ -128,19 +137,19 @@ class SkillMatcher:
         
         return skills
         
-    def calc_skillscore(self, rSkills: set[str], jSkills: set[str]) -> float: # Use fuzzy matching to calc skill score between a resume and job desc
+    def calc_skillscore(self, rSkills: set[str], jSkills: set[str]) -> float: # Use basic fuzzy matching to calc skill score between a resume and job desc (prob gotta change this to Levenshtein or Winkler)
         if not jSkills:
             return 0.0
         
         matches = 0
-        for job_skill in jSkills:
-            if job_skill in rSkills:
+        for jSkill in jSkills:
+            if jSkill in rSkills:
                 matches += 1
                 continue
                 
             # Check for partial matches (i.e python in (programming python))
-            for resume_skill in rSkills:
-                if (job_skill in resume_skill or resume_skill in job_skill):
+            for rSkill in rSkills:
+                if (jSkill in rSkill or rSkill in jSkill):
                     matches += 0.5
                     break
         
@@ -162,7 +171,7 @@ class ReadabilityAnalyzer:
         words = text.split() 
         avg_sentence_length = len(words) / len(sentences) 
         
-        # Calculates "Complex" words (Words with 2 or more syllables)
+        # Calculation for if words have more than 2 syllables (This is what would make them "complex" it is not a good thing to have too many complex words)
         complex_words = sum(1 for word in words if self.count_syllables(word) > 2) 
         cw_ratio = complex_words / len(words) if words else 0
         
@@ -174,7 +183,8 @@ class ReadabilityAnalyzer:
             "avg_sentence_length": avg_sentence_length,
             "cw_ratio": cw_ratio
         }
-        
+    
+    # Lowkey probably unneccessary will probably replace this implementation (Likely with something like textstat)
     @staticmethod
     def count_syllables(word: str) -> int:
         word = word.lower()
@@ -207,9 +217,9 @@ class ATSScorer:
                         job_type: str = "general") -> dict:
         keyword_scores = self.calc_kw_score(resume_text, job_description)
         
-        resume_skills = self.skill_matcher.skillExtractor(resume_text)
-        job_skills = self.skill_matcher.skillExtractor(job_description)
-        skill_score = self.skill_matcher.calc_skillscore(resume_skills, job_skills)
+        rSkills = self.skill_matcher.skillExtractor(resume_text)
+        jSkills = self.skill_matcher.skillExtractor(job_description)
+        skill_score = self.skill_matcher.calc_skillscore(rSkills, jSkills)
         
         readability_metrics = self.RA.calc_readability(resume_text)
         
@@ -226,8 +236,8 @@ class ATSScorer:
             "match score": round(keyword_scores["match score"], 2),
             "skill_match": round(skill_score, 2),
             "readability": round(readability_metrics["score"], 2),
-            "matched_skills": resume_skills.intersection(job_skills),
-            "missing_skills": job_skills - resume_skills,
+            "matched_skills": rSkills.intersection(jSkills),
+            "missing_skills": jSkills - rSkills,
             "detailed_metrics": {
                 "kw_freq": keyword_scores["kw_freq"],
                 "avg_sentence_length": round(readability_metrics["avg_sentence_length"], 2),
@@ -307,7 +317,7 @@ class ATSChecker:
             if file_type.lower() == "pdf":
                 resText = self.document_parser.extractPDF(file_path)
             elif file_type.lower() == "docx":
-                resText = self.document_parser.extractDOCX(file_path)
+                resText = self.document_parser.extractDocx(file_path)
             else:
                 raise ValueError(f"Unsupported file type: {file_type}")
                 
@@ -316,7 +326,7 @@ class ATSChecker:
             scores["metadata"] = {
                 "timestamp": datetime.now().isoformat(),
                 "file_name": Path(file_path).name,
-                "file_type": file_type
+                "file_type": file_type 
             }
             
             return scores
@@ -328,7 +338,7 @@ def main():
         checker = ATSChecker()
         
         # Both variables below are for testing and should be changed to user input
-        resume_path = "C:/Users/hidde/OneDrive - Sam Houston State University/Desktop/Izaiah Fleming Resume 2025 DS.docx"
+        resume_path = "/home/zay/Downloads/Izaiah Fleming Resume 2025 .docx"
         jobDesc = """ 
         Python Developer Position
         
