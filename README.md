@@ -25,3 +25,6 @@ Once the virtual environment is activated, install the required dependencies wit
 To run the project, enter `python app.py`
 
 The app will default to `localhost:5000` in the browser, but the port number can be changed
+
+
+To initialize the database: `mysql -u <username> -p < db.sql`
