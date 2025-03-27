@@ -71,10 +71,10 @@
     <div class="navbar">
         <img src="{{ url_for('static', filename='logo.png') }}" alt="Anti-ATS Logo">
         <div class="navbar-links">
-            <a href="#">FAQs</a>
-            <a href="#">How it works</a>
+            <a href="{{ url_for('faq') }}">FAQs</a>
+            <a href="{{ url_for('about') }}"></a>
+            <a href="{{ url_for('howitworks') }}">How it works</a>
             <a href="{{ url_for('register') }}">Sign up</a>
-            <a href="{{ url_for('login') }}">Login</a>
         </div>
     </div>
 
