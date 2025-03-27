@@ -29,11 +29,20 @@ def login():
 
 @app.route("/register")
 def register():
+    # send registration information to db instance
     return render_template("register.html")
 
+@app.route("/faq")
+def faq():
+    return render_template("faq.html")
 
+@app.route("/how-it-works")
+def howitworks():
+    return render_template("howitworks.html")
 
-
+@app.route("/about")
+def about():
+    return render_template("about.html")
 
 
 

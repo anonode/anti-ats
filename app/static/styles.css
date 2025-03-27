@@ -1,0 +1,216 @@
+/* styles.css */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7f9;
+}
+
+.navbar {
+    background-color: #1a2533;
+    color: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar img {
+    height: 50px;
+}
+
+.navbar-links a {
+    color: white;
+    text-decoration: none;
+    margin: 0 15px;
+    font-size: 16px;
+    padding: 8px 12px;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.navbar-links a:hover {
+    background-color: white;
+    color: #1a2533;
+}
+
+.about-container {
+    margin: 40px auto;
+    text-align: center;
+    width: 80%;
+    max-width: 1000px;
+}
+
+.about-container h1 {
+    font-size: 36px;
+    color: #1a2533;
+}
+
+.about-container p {
+    font-size: 18px;
+    color: #555;
+    line-height: 1.6;
+    margin: 20px 0;
+}
+
+.about-container img {
+    width: 100%;
+    max-width: 600px;
+    margin-top: 30px;
+    border-radius: 10px;
+}
+
+.team-section {
+    margin-top: 50px;
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    display: inline-block;
+    width: 100%;
+}
+
+.team-section h2 {
+    font-size: 28px;
+    color: #1a2533;
+}
+
+.team-section p {
+    font-size: 16px;
+    color: #333;
+}
+
+.team-member {
+    display: inline-block;
+    width: 30%;
+    margin: 10px;
+    text-align: center;
+}
+
+.team-member img {
+    width: 80%;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+.footer {
+    text-align: center;
+    margin-top: 50px;
+    padding: 20px;
+    background-color: #1a2533;
+    color: white;
+}
+
+.upload-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 40px;
+}
+.upload-box {
+    border: 2px dashed #1a2533;
+    padding: 30px;
+    width: 50%;
+    background-color: white;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+.custom-file-upload {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #1a2533;
+    color: white;
+    font-size: 18px;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 80%;
+    margin: 0 auto;
+}
+.upload-icon {
+    height: 24px;
+    margin-right: 10px;
+}
+.dropdown-icon {
+    margin-left: 10px;
+}
+#file-upload {
+    display: none;
+}
+.file-size-text {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #555;
+}
+/* Submit button styling */
+.submit-container {
+    text-align: center; /* Centers the button */
+    margin-top: 20px;
+}
+#submit-btn {
+    display: none;
+    background-color: #23395d;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-left: auto;
+    margin-right: auto;
+    
+}
+#submit-btn:hover {
+    background-color: #1a2533;
+}
+.instructions {
+    margin-top: 40px;
+    background-color: white;
+    padding: 30px;
+    width: 50%;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    display: inline-block;
+}
+.instructions h3 {
+    color: #1a2533;
+    text-align: center;
+}
+.instructions ol {
+    padding-left: 20px;
+    font-size: 18px;
+    color: #333;
+}
+.login-container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 5px 25px 25px rgba(0, 0, 0, 0.1);
+    width: 40%;
+    margin: auto;
+}
+input {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+button {
+    background-color: #1a2533;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}
+button:hover {
+    background-color: #23395d;
+}
