@@ -214,3 +214,20 @@ button {
 button:hover {
     background-color: #23395d;
 }
+
+.google-container {
+    display: flex;
+    padding: 1px;
+    margin: 1px;
+    border-style: groove;
+    height: 50px;
+    justify-content: space-between;
+    border-radius: 5px;
+}
+.google-container img {
+    height: 50px;
+    width: 50px;
+}
+.google-container h2 {
+    padding-right: 7cm;
+}

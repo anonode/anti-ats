@@ -3,69 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <title>Login</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #1a2533;
-            ;
-            text-align: center;
-            padding: 50px;
-        }
-        .navbar {
-            background-color: #1a2533;
-            color: white;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .navbar img {
-            height: 50px;
-        }
-        .navbar-links a {
-            color: white;
-            text-decoration: none;
-            margin: 0 15px;
-            font-size: 16px;
-            padding: 8px 12px;
-            border-radius: 5px;
-            transition: 0.3s;
-        }
-        .navbar-links a:hover {
-            background-color: white;
-            color: #1a2533;
-        }
-        .login-container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 5px 25px 25px rgba(0, 0, 0, 0.1);
-            width: 40%;
-            margin: auto;
-        }
-        input {
-            width: 90%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        button {
-            background-color: #1a2533;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            font-size: 18px;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-        }
-        button:hover {
-            background-color: #23395d;
-        }
-    </style>
 </head>
 <body>
     <div class="navbar">
@@ -85,6 +24,10 @@
             <input type="password" name="password" placeholder="Password" required><br>
             <button type="submit">Login</button>
         </form>
+        <div class="google-container">
+            <img src="{{ url_for('static', filename='google.jpeg') }}" alt="google logo">
+            <h2>Login with Google</h2>
+        </div>
     </div>
 </body>
 </html>
