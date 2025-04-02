@@ -8,7 +8,7 @@ from scanner import *
 
 app = Flask(__name__)
 app.config.from_object(Config)
-upload_path = "/home/anti-ats/submissions" # adjust this later
+upload_path = "/home/anti-ats/submissions/" # adjust this later
 app.secret_key = 'perfectchem1cal' # sign session cookies
 mysql = MySQL(app)
 
