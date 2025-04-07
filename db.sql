@@ -18,4 +18,5 @@ CREATE TABLE submissions (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+
 -- add tables for analytics: number of submissions per user, variation in file size (pie chart?), file extension count, etc...

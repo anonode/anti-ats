@@ -1,11 +1,106 @@
-/* styles.css */
+/* General Styles */
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Roboto', sans-serif;    background-color: #1a2533;
+    text-align: center;
+    padding: 50px;
     margin: 0;
-    padding: 0;
-    background-color: #f4f7f9;
 }
 
+/* Dark Theme (for pages that need a dark background) */
+.dark-theme {
+    background-color: #1a2533;
+    color: white;
+}
+
+/* Light Theme (for pages that need a white background) */
+.light-theme {
+    background-color: white;
+    color: black;
+}
+
+.navbar3 {
+    background-color: #1a2533;
+    color: white;
+    padding: 20px 0;
+    position: absolute; /* Ensure it starts from the very top */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.navbar3 img {
+    height: 50px;
+}
+
+.navbar3-links {
+    display: center;
+}
+
+.navbar3-links a {
+    color: white;
+    text-decoration: none;
+    display: center;
+    font-size: 16px;
+    padding: 8px 12px;
+}
+
+.navbar3-links a:hover {
+    background-color: white;
+    color: #1a2533;
+}
+
+/* Navbar at the bottom */
+.navbar2 {
+    background-color: #1a2533;
+    color: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed; /* Keeps navbar fixed at the bottom */
+    bottom: 0; /* Anchors it to the bottom */
+    left: 0; /* Stretches across the full width */
+    right: 0; /* Stretches across the full width */
+    width: 100%; /* Ensures full width */
+    box-sizing: border-box; /* Prevents padding from expanding width */
+}
+
+.navbar2 img {
+    height: 50px; /* Keeps logo size consistent */
+}
+
+.logo {
+    transform: scale(0.45); /* Shrinks to 70% of original size */
+    transform-origin: middle; /* Optional: Controls shrink direction */
+}
+
+.logo2 {
+    transform: scale(0.45); /* Shrinks to 70% of original size */
+    transform-origin: top; /* Optional: Controls shrink direction */
+}
+
+.navbar2-links {
+    display: flex;
+    gap: 15px;
+}
+
+.navbar2-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    padding: 8px 12px;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.navbar2-links a:hover {
+    background-color: white;
+    color: #1a2533;
+}
+/* Navbar */
 .navbar {
     background-color: #1a2533;
     color: white;
@@ -19,10 +114,14 @@ body {
     height: 50px;
 }
 
+.navbar-links {
+    display: flex;
+    gap: 15px;
+}
+
 .navbar-links a {
     color: white;
     text-decoration: none;
-    margin: 0 15px;
     font-size: 16px;
     padding: 8px 12px;
     border-radius: 5px;
@@ -34,10 +133,46 @@ body {
     color: #1a2533;
 }
 
+.hero {
+    text-align: center;
+    padding: 100px 20px;
+    color: white;
+    width: 75%;
+    background: rgba(26, 37, 51, 0.9);
+    backdrop-filter: blur(10px);
+    margin-left: auto; /* Automatically centers horizontally */
+    margin-right: auto; /* Automatically centers horizontally */
+}
+
+
+.hero h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+.hero button {
+    padding: 12px 25px;
+    border: none;
+    background: #FADA5E;
+    color: black;
+    font-size: 18px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.hero button:hover {
+    background: #E5C100;
+    transform: scale(1.05);
+}
+
+/* About Section */
 .about-container {
     margin: 40px auto;
     text-align: center;
     width: 80%;
+    position: relative;
+    top: -100px; /* Moves the container up */
     max-width: 1000px;
 }
 
@@ -48,9 +183,10 @@ body {
 
 .about-container p {
     font-size: 18px;
-    color: #555;
+    color: #dddddd;
     line-height: 1.6;
     margin: 20px 0;
+
 }
 
 .about-container img {
@@ -60,6 +196,7 @@ body {
     border-radius: 10px;
 }
 
+/* Team Section */
 .team-section {
     margin-top: 50px;
     background-color: white;
@@ -67,7 +204,17 @@ body {
     border-radius: 10px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     display: inline-block;
-    width: 100%;
+    width: 75%;
+    position: relative;
+    top: -100px; /* Moves the container up */
+}
+
+
+.team-member {
+    display: inline-block;
+    width: 20%;
+    margin: 10px;
+    text-align: center;
 }
 
 .team-section h2 {
@@ -78,13 +225,8 @@ body {
 .team-section p {
     font-size: 16px;
     color: #333;
-}
+    margin-bottom: 10px;
 
-.team-member {
-    display: inline-block;
-    width: 30%;
-    margin: 10px;
-    text-align: center;
 }
 
 .team-member img {
@@ -93,141 +235,350 @@ body {
     margin-bottom: 10px;
 }
 
-.footer {
+/* Forms & Input Fields */
+input {
+    width: 90%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 2px solid #000;
+    border-radius: 25px; /* More rounded fields */
+    font-size: 16px;
     text-align: center;
-    margin-top: 50px;
-    padding: 20px;
-    background-color: #1a2533;
-    color: white;
 }
 
+h2 {
+    font-size: 28px;
+    color: black;
+    margin-bottom: 20px;
+}
+
+.login-container {
+    background-color: #fff;
+    color: #000;
+    padding: 20px;
+    width: 400px;
+    border-radius: 15px;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    border: 2px dotted #000;
+    position: absolute;
+    top: 50%;                   /* Push down from top */
+    left: 50%;                  /* Push from left */
+    transform: translate(-50%, -50%); /* Center precisely */
+}
+
+/* Flex container for first/last name */
+.name-fields {
+    display: flex;
+    gap: 10px; /* Space between the two inputs */
+}
+
+.name-fields input {
+    flex: 1; /* Each input takes equal width */
+    padding: 10px;
+    width: 100%; /* Full width of flex container */
+}
+
+/* Style all other inputs */
+.login-container input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    box-sizing: border-box; /* Prevents overflow */
+}
+
+button {
+    background-color: #FADA5E; /* Golden color */
+    color: black;
+    border: 2px solid black;
+    padding: 12px 20px;
+    font-size: 18px;
+    border-radius: 25px;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    transition: 0.3s;
+}
+
+.custom-file-upload {
+    background-color: #1a2533;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block;
+    max-width: 300px;
+    width: 100%;
+    margin: 10px auto;
+    transition: 0.3s;
+}
+
+button:hover, .custom-file-upload:hover {
+    background-color: #E5C100;
+}
+
+/* Upload Section */
 .upload-container {
     display: flex;
+    color: #000;
+    padding: 50px;
     flex-direction: column;
     align-items: center;
     margin-top: 40px;
 }
-.upload-box {
-    border: 2px dashed #1a2533;
-    padding: 30px;
-    width: 50%;
-    background-color: white;
-    border-radius: 10px;
-    text-align: center;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+
+p {
+    margin-top: 20px;
 }
+
+p a {
+    color: blue;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+p a:hover {
+    text-decoration: underline;
+}
+
+
+.upload-box {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 90%;
+    text-align: center;
+    border: 2px dashed #1a2533;
+}
+
 .custom-file-upload {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #1a2533;
-    color: white;
-    font-size: 18px;
-    padding: 12px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 80%;
-    margin: 0 auto;
 }
+
 .upload-icon {
     height: 24px;
     margin-right: 10px;
 }
-.dropdown-icon {
-    margin-left: 10px;
-}
+
 #file-upload {
     display: none;
 }
+
 .file-size-text {
     margin-top: 10px;
     font-size: 14px;
     color: #555;
 }
-/* Submit button styling */
+
 .submit-container {
-    text-align: center; /* Centers the button */
+    text-align: center;
     margin-top: 20px;
 }
+
 #submit-btn {
     display: none;
-    background-color: #23395d;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    font-size: 18px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: 0.3s;
     margin-left: auto;
     margin-right: auto;
-    
 }
-#submit-btn:hover {
-    background-color: #1a2533;
-}
+
+/* General Instructions Section */
 .instructions {
     margin-top: 40px;
     background-color: white;
     padding: 30px;
-    width: 50%;
+    max-width: 600px;
+    width: 90%;
     border-radius: 10px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     text-align: left;
     display: inline-block;
 }
+
 .instructions h3 {
     color: #1a2533;
     text-align: center;
 }
+
 .instructions ol {
     padding-left: 20px;
     font-size: 18px;
     color: #333;
 }
-.login-container {
-    background-color: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 5px 25px 25px rgba(0, 0, 0, 0.1);
-    width: 40%;
-    margin: auto;
-}
-input {
-    width: 90%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-}
-button {
-    background-color: #1a2533;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    font-size: 18px;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 100%;
-}
-button:hover {
-    background-color: #23395d;
+
+/* Footer */
+.footer {
+    text-align: center;
+    margin-top: 100px;
+    padding: 20px;
+    color: rgb(0, 0, 0);
 }
 
 .google-container {
-    display: flex;
-    padding: 1px;
-    margin: 1px;
+    margin-top: 20px;
     border-style: groove;
-    height: 50px;
-    justify-content: space-between;
-    border-radius: 5px;
+    display: flex;
+    align-items: center;  /* Vertically align the items */
+    justify-content: center;  /* Horizontally center the items */
 }
+
+.google-container button {
+    background-color: #FADA5E; /* Golden color */
+    color: black;
+    border: 2px solid black;
+    padding: 12px 20px;
+    font-size: 18px;
+    border-radius: 25px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+    width: 100%;
+    transition: 0.3s;
+}
+
+.google-container button:hover {
+    background-color: #f5f5f5; /* Light gray hover effect */
+}
+
+/* Google Logo inside the Button */
 .google-container img {
-    height: 50px;
-    width: 50px;
+    height: 20px;
+    margin-right: 10px;
 }
+
+/* Make sure the h2 text is centered and aligned properly */
 .google-container h2 {
-    padding-right: 7cm;
+    margin: 0;  /* Remove default margins for perfect alignment */
+    font-size: 16px;
+}
+
+
+.how-it-works {
+    margin-top: 50px; /* Adjust as needed */
+}
+
+
+.results-layout {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 75%;
+    margin: auto;
+    gap: 2px; 
+
+}
+
+.results-container {
+    text-align: center;
+    margin-top: 100px; 
+}
+
+#result-percentage {
+    width: 100px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    border: 2px solid rgb(0, 0, 0);
+    border-radius: 10px;
+    padding: 8px;
+}
+
+.chart-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 400px;
+}
+
+.chart-center-text {
+    position: absolute;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+}
+
+.update-btn {
+    background-color: #FADA5E;
+    color: black;
+    border: 2px solid black;
+    padding: 12px 20px;
+    font-size: 18px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.update-btn:hover {
+    background-color: #E5C100;
+    transform: scale(1.05);
+}
+
+.data-analysis {
+    flex: 1;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    max-width: 200px;
+    align-items: left;
+    margin-top: 100px;
+
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: 20px;
+}
+
+.profile-icon {
+    border-radius: 50%;
+}
+
+.logo2 {
+    all: unset; 
+    width: auto;  
+    height: auto; 
+    border-radius: 0; 
+}
+
+canvas {
+    max-width: 100%;
+    height: auto;
+}
+
+.update-btn {
+    margin-top: 15px;
+}
+
+#score {
+    width: 120px; /* Narrower width */
+    height: 35px; /* Adjust height */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center; /* Center text inside */
+    font-size: 14px; /* Adjust font size */
+    background-color: #f9f9f9;
+    color: #333;
+    position: absolute; 
+    top: -70px; /* Move it upward relative to the chart */
+    left: 50%; /* Center it horizontally */
+    transform: translateX(-50%); /* Adjust for perfect horizontal centering */
+    z-index: 10; /* Ensure it appears on top */
+}
+
+#myChart {
+    height: 400p;
 }

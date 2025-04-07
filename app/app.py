@@ -15,7 +15,7 @@ mysql = MySQL(app)
 @app.route("/", methods=["GET", "POST"])
 def home():
     if "user_id" not in session:
-        return render_template(url_for("login"))
+        return redirect(url_for('login'))
     
     username = session.get("username")
     
@@ -84,9 +84,9 @@ def login():
 def register():
     
     if request.method == "POST":
+        email = request.form.get("email")
         username = request.form.get("username")
         password = request.form.get("password")
-        email = request.form.get("email")
         
         user = get_user_by_username(username)
         if user:
@@ -99,11 +99,7 @@ def register():
             return render_template(url_for("register"))
 
         else:
-            pass_hash = generate_password_hash(password)
-            cur = mysql.connection.cursor()
-            cur.execute("INSERT INTO users (username, password, email) VALUES (%s, %s, %s)", (username, pass_hash, email))
-            mysql.connection.commit()
-            cur.close()
+            create_user(username, password, email)
             flash("Registered successfully")
             return redirect(url_for("login"))
     
