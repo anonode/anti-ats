@@ -5,7 +5,7 @@ import os
 from config import Config
 from database import *
 from scanner import *
-from ATSChecker import ats_results
+from ATSChecker import ATSChecker
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -54,6 +54,7 @@ def my_resumes():
         flash("You don't have any resumes uploaded yet.", "info")
         return render_template("user_files.html", files=[])
 
+
 @app.route("/results", methods = ["GET", "POST"])
 def results():
     if "user_id" not in session:
@@ -61,23 +62,41 @@ def results():
     
     username = session.get("username")
     
-    ats_data = {
-        "overall_score": 38.57,
-        "keyword_match": 15.13,
-        "skill_match": 50.0,
-        "readability": 62.6,
-        "skills": {
-            "matched": ["sql", "python"],
-            "missing": ["database", "aws"]
-        },
-        "readability_metrics": {
-            "avg_sentence_length": 55.25,
-            "complex_word_ratio": 33.00
-        },
-        "file": "RichardOlivarri.pdf",
-        "analysis_time": "2025-04-06T23:42:27.784450"
-    }
+    file_path = "C:\\Users\\roliv\\Code\\anti-ats\\app\\RichardOlivarri.pdf"
+    job_description = """ 
+        Python Developer Position
+        
+        Requirements:
+        Bachelor Degree in Computer Science, Software engineering, or equivalent.
+        Strong planning, organizational, analytical, interpersonal, decision making, oral and written communication skills strongly preferred. 
+        Software development experience is a must. C# or Python experience is preferred.
+        Database experience (Postgres, MySql, etc ) is preferred.
+        Familiarity with DOD Software practices, systems, and publications is helpful.
+        Thorough knowledge of MS Office product suite (Excel, Access, Word, PowerPoint).
+        Ability to understand company instruction, company process and quality manuals.
+        Must be a US Citizen. Make this into a single sentence for me
+        
+        Responsibilities:
+        Develop cloud hosted applications 
+        Provide support to the deployment, automation, management, and maintenance of AWS production applications.
+        Develop and deploy fully functional architecture and tools to the AWS cloud 
+        Support the development and migration of web applications to the cloud (Ideally AWS Govcloud and/or Cloud One) 
+        Troubleshooting and problem solving across different application domains and platforms.
+        Pre-deployment acceptance testing.
+        Carry out and/or oversee critical system security testing.
+        Analyze and provide recommendations for architecture and process improvements.
+        Deployment of metrics, logging, and monitoring systems on AWS platform.
+        Design, maintenance and management tools for automation of different operational processes.
+        Participates in projects as a team member and/or team project leader.
+        Coordinates activities with the Manager of Engineering.
+        Manages approved project timelines. Produces periodic project status reports comparing actual to forecasted timeline.
+        Writes detailed technical reports to document information related to the understanding of relevant failure modes and the results of reliability analyses, prepares proposals & develops work instructions. Prepares and delivers presentations of analysis results to appropriate staff and customers.
+        Carries out special duties as assigned.
+        Performs other related duties as assigned.
+        """
     
+    checker = ATSChecker()
+    ats_data = checker.resCheck(file_path=file_path, jobDesc=job_description, file_type="pdf", job_type="technical")    
     return render_template("results.html", ats_data=ats_data, username=username)
 
 @app.route("/login", methods = ["GET", "POST"])

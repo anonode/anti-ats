@@ -10,9 +10,7 @@
     <div class="navbar3">
         <img src="{{ url_for('static', filename='logo.png') }}" alt="Anti-ATS Logo" class="logo2">
         <div class="navbar3-links">
-            <div class="welcome-container">
-                <span class="welcome-message">Welcome, {{ username }}</span>
-            </div>
+            <span class="welcome-text">Welcome, {{ username }}</span>
             <a href="{{ url_for('faq') }}">FAQs</a>
             <a href="{{ url_for('howitworks') }}">How it works</a>
         </div>
@@ -39,22 +37,22 @@
                 <h3>Skill Analysis</h3>
                 <h4>Matched Skills:</h4>
                 <ul>
-                    {% for skill in ats_data['skills']['matched'] %}
+                    {% for skill in ats_data['matched_skills'] %}
                         <li>{{ skill }}</li>
                     {% endfor %}
                 </ul>
 
                 <h4>Missing Skills:</h4>
                 <ul>
-                    {% for skill in ats_data['skills']['missing'] %}
+                    {% for skill in ats_data['matched_skills'] %}
                         <li>{{ skill }}</li>
                     {% endfor %}
                 </ul>
 
                 <h3>Readability Metrics</h3>
                 <ul>
-                    <li><strong>Average Sentence Length:</strong> {{ ats_data['readability_metrics']['avg_sentence_length'] }} words</li>
-                    <li><strong>Complex Word Ratio:</strong> {{ ats_data['readability_metrics']['complex_word_ratio'] }}%</li>
+                    <li><strong>Average Sentence Length:</strong> {{ ats_data['detailed_metrics']['avg_sentence_length'] }} words</li>
+                    <li><strong>Complex Word Ratio:</strong> {{ ats_data['detailed_metrics']['cw_ratio'] }}%</li>
                 </ul>
 
                 <p><strong>Analysis Time:</strong> {{ ats_data['analysis_time'] }}</p>

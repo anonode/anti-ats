@@ -18,17 +18,7 @@ body {
     color: black;
 }
 
-.welcome-container {
-    display: flex;
-    justify-content: center; /* Center the welcome message horizontally */
-    align-items: center; /* Center the message vertically */
-    flex-grow: 1; /* Ensure it takes up available space */
-}
-
-.welcome-message {
-    font-weight: bold; /* Make the text bold */
-}
-
+/* Update navbar3 to center its contents */
 .navbar3 {
     background-color: #1a2533;
     color: white;
@@ -40,28 +30,42 @@ body {
     top: 0;
     left: 0;
     right: 0;
+    width: 100%;
 }
 
+/* Ensure the logo stays on the left */
 .navbar3 img {
     height: 50px;
 }
 
+/* Update navbar3-links to center the welcome message and links */
 .navbar3-links {
-    display: center;
+    display: flex;
+    justify-content: center;  /* Center the content inside */
+    align-items: center;  /* Ensure they are aligned vertically */
+    width: 100%;  /* Take up the full width */
 }
 
+/* Center the "Welcome, {{ username }}" span text */
+.welcome-text {
+    font-weight: bold;
+    text-align: center;
+    flex-grow: 1;  /* Let the span take up any remaining space */
+    margin-right: 20px;  /* Optional: adds space between username and links */
+}
+
+/* Navbar links styling */
 .navbar3-links a {
     color: white;
     text-decoration: none;
-    display: center;
-    font-size: 16px;
-    padding: 8px 12px;
+    margin: 0 10px;  /* Adjust space between links */
 }
 
 .navbar3-links a:hover {
     background-color: white;
     color: #1a2533;
 }
+
 
 /* Navbar at the bottom */
 .navbar2 {
