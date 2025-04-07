@@ -8,7 +8,6 @@ mysql = MySQL()
 
 def create_user(username, password, email) -> bool:
     print(f"email: {email}\nusername: {username}\npassword: {password}")
-    return True
     cur = mysql.connection.cursor()
     pass_hash = generate_password_hash(password)
     cur.execute("INSERT INTO users (username, password, email) VALUES (%s, %s, %s)", (username, pass_hash, email))

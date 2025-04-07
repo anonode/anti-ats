@@ -5,6 +5,7 @@ import os
 from config import Config
 from database import *
 from scanner import *
+from ATSChecker import ats_results
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -53,6 +54,31 @@ def my_resumes():
         flash("You don't have any resumes uploaded yet.", "info")
         return render_template("user_files.html", files=[])
 
+@app.route("/results", methods = ["GET", "POST"])
+def results():
+    if "user_id" not in session:
+        return redirect(url_for('login'))
+    
+    username = session.get("username")
+    
+    ats_data = {
+        "overall_score": 38.57,
+        "keyword_match": 15.13,
+        "skill_match": 50.0,
+        "readability": 62.6,
+        "skills": {
+            "matched": ["sql", "python"],
+            "missing": ["database", "aws"]
+        },
+        "readability_metrics": {
+            "avg_sentence_length": 55.25,
+            "complex_word_ratio": 33.00
+        },
+        "file": "RichardOlivarri.pdf",
+        "analysis_time": "2025-04-06T23:42:27.784450"
+    }
+    
+    return render_template("results.html", ats_data=ats_data, username=username)
 
 @app.route("/login", methods = ["GET", "POST"])
 def login():
@@ -93,8 +119,8 @@ def register():
             flash(f'{username} is already taken. Please select another username', 'error')
             return render_template(url_for("register"))
 
-        email = get_user_by_email(email)
-        if email:
+        check_email = get_user_by_email(email)
+        if check_email:
             flash(f'Already a user with this email. Please enter another email address')
             return render_template(url_for("register"))
 

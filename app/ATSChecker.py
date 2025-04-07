@@ -333,7 +333,7 @@ class ATSChecker:
 
 
 
-def main():
+def ats_results():
     try:
         checker = ATSChecker()
         
@@ -414,6 +414,3 @@ def main():
     except Exception as e:
         print(f"\nAn unexpected error occurred: {str(e)}")
         raise
-
-if __name__ == "__main__":
-    main()
