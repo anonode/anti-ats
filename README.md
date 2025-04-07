@@ -28,3 +28,15 @@ The app will default to `localhost:5000` in the browser, but the port number can
 
 
 To initialize the database: `mysql -u <username> -p < db.sql`
+
+### Installs for NLP Scanner
+
+Python Packages: 
+`pip install docx2txt PyMuPDF nltk spacy`
+
+Spacy Mode: 
+`python -m spacy download en_core_web_md`
+
+NLTK Data:
+`python -m nltk.downloader stopwords` 
+`python -m nltk.downloader punkt`
