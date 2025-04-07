@@ -62,7 +62,8 @@ def results():
     
     username = session.get("username")
     
-    file_path = "C:\\Users\\roliv\\Code\\anti-ats\\app\\RichardOlivarri.pdf"
+#    file_path = "C:\\Users\\roliv\\Code\\anti-ats\\app\\RichardOlivarri.pdf"
+    file_path = "/home/ergo/repos/anti-ats/app/RichardOlivarri.pdf"
     job_description = """ 
         Python Developer Position
         
