@@ -29,17 +29,19 @@ def home():
     
     username = session.get("username")
     
+    files = get_user_files(username)
+    
     if request.method == "POST":
         file = request.files.get("file")
         if file:
-            if file.filename.endswith('.pdf') or file.filename.endswith('docx') or file.filename.endswith('doc'): # avoid malicious file updloads
-                filename = secure_filename(file.filename) # no directory traversal here. removes all special characters
+            if file.filename.endswith('.pdf') or file.filename.endswith('docx') or file.filename.endswith('doc'):  # avoid malicious file uploads
+                filename = secure_filename(file.filename)  # no directory traversal here. removes all special characters
                 user_dir = os.path.join(upload_path, username)
                 
                 if not os.path.exists(user_dir):
                     os.makedirs(user_dir)
                     
-                file.save(os.path.join(user_dir, filename)) # finally save file
+                file.save(os.path.join(user_dir, filename))  # save the file
                 
                 flash("File uploaded successfully", "success")
                 return redirect(url_for("home"))
@@ -47,21 +49,7 @@ def home():
                 flash('Invalid file type', 'error')
                 return redirect(url_for("home"))
     
-    return render_template("index.html")  
-
-@app.route("/<username>-files")
-def my_resumes():
-    if "username" not in session: # make sure they are logged in
-        return redirect(url_for("login"))
-
-    username = session["username"]
-    files = get_user_files(username)
-
-    if files:
-        return render_template("user_files.html", username=username, files=files)
-    else:
-        flash("You don't have any resumes uploaded yet.", "info")
-        return render_template("user_files.html", files=[])
+    return render_template("index.html", files=files)
 
 
 @app.route("/results", methods = ["GET", "POST"])

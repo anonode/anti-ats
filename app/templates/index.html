@@ -18,22 +18,6 @@
         </div>
     </div>
 
-    <div class="upload-container">
-        <div class="upload-box">
-            <form method="POST" enctype="multipart/form-data" id="upload-form">
-                <label for="file-upload" class="custom-file-upload">
-                    <img src="{{ url_for('static', filename='paper-icon.png') }}" alt="Upload Icon" class="upload-icon">
-                    Choose Files
-                    <span class="dropdown-icon">▼</span>
-                </label>
-                <input id="file-upload" type="file" name="file" onchange="showSubmitButton()">
-                <p class="file-size-text">Max File Size: 1GB</p>
-
-                <div class="submit-container">
-                    <button type="submit" id="submit-btn">Submit</button>
-                </div>
-            </form>
-        </div>
 
         <div class="instructions">
             <h3>Instructions</h3>
@@ -45,7 +29,49 @@
                 <li>Make adjustments and re-upload.</li>
                 <li>Increase chances of passing ATS filters.</li>
             </ol>
+            <div class="upload-container">
+                <div class="upload-box">
+                    <div id="flash-messages">
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                <ul>
+                                    {% for category, message in messages %}
+                                        <li class="{{ category }}">{{ message }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+        
+                    <form method="POST" enctype="multipart/form-data" id="upload-form">
+                        <label for="file-upload" class="custom-file-upload">
+                            <img src="{{ url_for('static', filename='paper-icon.png') }}" alt="Upload Icon" class="upload-icon">
+                            Choose Files
+                            <span class="dropdown-icon">▼</span>
+                        </label>
+                        <input id="file-upload" type="file" name="file" onchange="showSubmitButton()">
+                        <p class="file-size-text">Max File Size: 1MB</p>
+        
+                        <div class="submit-container">
+                            <button type="submit" id="submit-btn">Submit</button>
+                        </div>
+                    </form>
+                </div>
         </div>
+
+        {% if files %}
+            <div class="uploaded-container">
+                <h3>Your Previous Submissions:</h3>
+                <ul>
+                    {% for file in files %}
+                        <li>{{ file.filename }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% else %}
+            <p>You haven't uploaded any resumes yet.</p>
+        {% endif %}
+
     </div>
 
     <div class="footer">

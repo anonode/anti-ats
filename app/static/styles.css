@@ -367,7 +367,7 @@ p a:hover {
     max-width: 600px;
     width: 90%;
     text-align: center;
-    border: 2px dashed #1a2533;
+    border: 2px #1a2533;
 }
 
 .custom-file-upload {
@@ -663,4 +663,53 @@ a:hover {
 
 .google-btn:hover {
     background-color: #E5C100;
+}
+
+/* Success message style */
+.success {
+    color: green;
+    font-weight: bold;
+    background-color: #e0ffe0;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+/* Error message style */
+.error {
+    color: red;
+    font-weight: bold;
+    background-color: #ffe0e0;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+/* General message styling */
+#flash-messages ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#flash-messages ul li {
+    margin: 5px 0;
+}
+
+.uploaded-files {
+    margin-top: 20px;
+}
+
+.uploaded-files h3 {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.uploaded-files ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.uploaded-files ul li {
+    font-size: 16px;
+    padding: 5px 0;
 }
