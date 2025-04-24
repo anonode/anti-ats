@@ -19,6 +19,17 @@
 
     <div class="login-container">
         <h2>Login</h2>
+        <div id="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <ul>
+                        {% for category, message in messages %}
+                            <li class="{{ category }}">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+        </div>
         <form method="POST" action="{{ url_for('login') }}">
             <input type="text" name="username" placeholder="Username" required><br>
             <input type="password" name="password" placeholder="Password" required><br>
@@ -34,7 +45,7 @@
             </a>
         </div>
     </div>
-    
+
     <div class="footer">
         <p>&copy; 2025 Anti-ATS. All rights reserved.</p>
     </div>

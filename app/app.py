@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_dance.contrib.google import make_google_blueprint, google
 from werkzeug.utils import secure_filename
-import os
+import os, time
 # our stuff
 from config import Config
 from database import *
@@ -170,6 +170,7 @@ def register():
         else:
             create_user(username, password, email)
             flash("Registered successfully")
+            time.sleep(1)
             return redirect(url_for("login"))
     
     
