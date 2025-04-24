@@ -1,16 +1,22 @@
 import re, os
+import torch 
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from functools import lru_cache
 from pathlib import Path
 from datetime import datetime
 import docx2txt
 import fitz
+import nltk
 from nltk.corpus import stopwords
-import spacy
+from transformers import BertTokenizer, BertModel 
+import textstat
+
 
 class TextPreprocessor:
     def __init__(self):
         self.stop_words = frozenset(stopwords.words('english'))
-        self.nlp = spacy.load("en_core_web_md") # might need to switch to large model instead for proper word vectors
+        self.tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
+        self.model = BertModel.from_pretrained("bert-base-uncased")
         
     @lru_cache(maxsize=128) # Used to speed up performance (if same text is processed multiple times) by caching results for up to n unique inputs 
     def pptxt(self, text: str) -> str: # Pre-process txt WITHOUT stemming (Stemming negatively effects keywords)
@@ -31,8 +37,19 @@ class TextPreprocessor:
         return ' '.join(words) # Join all words back together into single string
     
     def extract_sentences(self, text: str) -> list[str]:
-        doc = self.nlp(text) # Parses text into "tokens" and sentences 
-        return [sent.text.strip() for sent in doc.sents] # Returns a cleaned list of sentence strings
+        sentences = nltk.tokenize.sent_tokenize(text)
+        sentence_embeddings = []
+
+        for sentence in sentences:
+            inputs = self.tokenizer(text, return_tensors = "pt", padding = True, truncation = True)
+            
+            with torch.no_grad():
+                outputs = self.model(**inputs)
+            
+            sentence_embedding = outputs.last_hidden_state.mean(dim = 1) # take an average accross all token embeddings for sentence-level embeddings
+            sentence_embeddings.append(sentence_embedding)
+
+        return sentences, sentence_embeddings # MrClean 
 
 class DocumentParser:
     @staticmethod
@@ -57,57 +74,58 @@ class DocumentParser:
         try:
             return docx2txt.process(file_path)
         except Exception as e:
-            raise ValueError(f"Failed to process DOCX file: {str(e)}")
+            raise ValueError(f"Failed to process DOCX file: {str(e)}") 
+        
 
 class KeywordExtractor: 
     def __init__(self, preprocessor: TextPreprocessor):
         self.preprocessor = preprocessor
         self.cache: dict[str, dict[str, float]] = {} # Cache to help with repeated calls 
 
-    # Helper function that probably needs some work but currently it makes it to where we dont have stupid long sentences for no reason
-    def isSentence(self, phrase: str) -> bool:
-        if len(phrase.split()) > 6 or phrase.endswith(('.', '!', '?')):
-            return True
-        return False
-        
+
     def extract_keywords(self, text: str) -> dict[str, float]:
         if text in self.cache:
             return self.cache[text]
             
         pText = self.preprocessor.pptxt(text)
-        doc = self.preprocessor.nlp(pText)
         
-        keywords = {}
+        tokens = self.preprocessor.tokenizer.tokenize(pText)
         
-        # Process nouns to look for multi-word phrases (i.e software engineering, machine learning)
-        for chunk in doc.noun_chunks:
-            phrase = chunk.text.lower()
+        mergedTokens = []
+        word = ''
 
-            if len(phrase.split()) > 1 and not phrase.endswith('.'): # this is kinda a monkey version of solving this issue needs change for sure
-                if not self.isSentence(phrase): 
-                    keywords[phrase] = keywords.get(phrase, 0) + 1
+        for token in tokens:
+            if token.startswith('##'):
+                word += token[2:] # Remove all hashtags that define subwords like ##ing and append the subword
+            else:
+                if word:
+                    mergedTokens.append(word)
+                word = token 
         
-        # Check each token for its relevancy and increments a counter for each relevant token
-        for token in doc:
-            if (not token.is_stop and not token.is_punct 
-                and not token.is_space and len(token.text) > 1):
-                word = token.text.lower()
-                keywords[word] = keywords.get(word, 0) + 1
+        # This is to fix the bug of the last word not being added
+        if word:
+            mergedTokens.append(word)
         
-        # Normalize frequencies
+        tfVec = TfidfVectorizer(ngram_range = (1,4), stop_words = 'english')
+        tfMatrix = tfVec.fit_transform([' '.join(mergedTokens)])
+
+        tfScores = dict(zip(tfVec.get_feature_names_out(), tfMatrix.toarray()[0]))
+
+        keywords = {ngram: score for ngram, score in sorted(tfScores.items(), key = lambda item: item[1], reverse = True)}
+
+        # Normalizing frequencies could help keyword matching accuracy so if keyword matching sucks use this code
         max_freq = max(keywords.values()) if keywords else 1
         kw_Weight = {
             word: (freq / max_freq) 
             for word, freq in keywords.items()
         }
-        
         self.cache[text] = kw_Weight
         return kw_Weight
+        
 
 class SkillMatcher:
     def __init__(self, preprocessor: TextPreprocessor):
         self.preprocessor = preprocessor
-        self.nlp = preprocessor.nlp
         self.sample_skills = { # Provides list of common skills for quicker recognition
             'python', 'java', 'javascript', 'c++', 'ruby', 'php', 'sql',
             'html', 'css', 'aws', 'azure', 'docker', 'kubernetes', 'linux',
@@ -117,24 +135,13 @@ class SkillMatcher:
         }
         
     def skillExtractor(self, text: str) -> set[str]:
-        doc = self.nlp(text.lower())
+        tokens = self.preprocessor.tokenizer.tokenize(text.lower())
         skills = set()
-        
-        # Extract noun phrases
-        for chunk in doc.noun_chunks:
-            phrase = chunk.text.lower()
-            if phrase in self.sample_skills:
-                skills.add(phrase)
-            for word in phrase.split(): # Check individual words (Incase there is a single word skill term)
-                if word in self.sample_skills:
-                    skills.add(word)
-        
-        # Check for skills in the text that might not be in noun chunks
-        text_lower = text.lower()
-        for skill in self.sample_skills:
-            if skill in text_lower:
-                skills.add(skill)
-        
+
+        for token in tokens:
+            if token in self.sample_skills:
+                skills.add(token)
+
         return skills
         
     def calc_skillscore(self, rSkills: set[str], jSkills: set[str]) -> float: # Use basic fuzzy matching to calc skill score between a resume and job desc (prob gotta change this to Levenshtein or Winkler)
@@ -160,7 +167,7 @@ class ReadabilityAnalyzer:
         self.preprocessor = preprocessor
         
     def calc_readability(self, text: str) -> dict[str, float]:
-        sentences = self.preprocessor.extract_sentences(text)
+        sentences, _ = self.preprocessor.extract_sentences(text)
         if not sentences:
             return {
                 "score": 0.0,
@@ -171,8 +178,8 @@ class ReadabilityAnalyzer:
         words = text.split() 
         avg_sentence_length = len(words) / len(sentences) 
         
-        # Calculation for if words have more than 2 syllables (This is what would make them "complex" it is not a good thing to have too many complex words)
-        complex_words = sum(1 for word in words if self.count_syllables(word) > 2) 
+        # Calculation for complex words updated to use textstat instead of my previous created function
+        complex_words = sum(1 for word in words if textstat.syllable_count(word) > 2) 
         cw_ratio = complex_words / len(words) if words else 0
         
         score = 100 - (avg_sentence_length * 0.5 + cw_ratio * 30)
@@ -183,27 +190,6 @@ class ReadabilityAnalyzer:
             "avg_sentence_length": avg_sentence_length,
             "cw_ratio": cw_ratio
         }
-    
-    # Lowkey probably unneccessary will probably replace this implementation (Likely with something like textstat)
-    @staticmethod
-    def count_syllables(word: str) -> int:
-        word = word.lower()
-        count = 0
-        vowels = 'aeiouy'
-        on_vowel = False
-        
-        for char in word:
-            is_vowel = char in vowels
-            if is_vowel and not on_vowel:
-                count += 1
-            on_vowel = is_vowel
-            
-        if word.endswith('e'):
-            count -= 1
-        if count == 0:
-            count = 1
-            
-        return count
     
 class ATSScorer:
     def __init__(self):
@@ -338,37 +324,25 @@ def main():
         checker = ATSChecker()
         
         # Both variables below are for testing and should be changed to user input
-        resume_path = "/home/zay/Downloads/Izaiah Fleming Resume 2025 .docx"
+        resume_path = "/home/zay/Downloads/Izaiah Fleming Resume 2025.pdf"
         jobDesc = """ 
-        Python Developer Position
-        
-        Requirements:
-        Bachelor Degree in Computer Science, Software engineering, or equivalent.
-        Strong planning, organizational, analytical, interpersonal, decision making, oral and written communication skills strongly preferred. 
-        Software development experience is a must. C# or Python experience is preferred.
-        Database experience (Postgres, MySql, etc ) is preferred.
-        Familiarity with DOD Software practices, systems, and publications is helpful.
-        Thorough knowledge of MS Office product suite (Excel, Access, Word, PowerPoint).
-        Ability to understand company instruction, company process and quality manuals.
-        Must be a US Citizen. Make this into a single sentence for me
-        
-        Responsibilities:
-        Develop cloud hosted applications 
-        Provide support to the deployment, automation, management, and maintenance of AWS production applications.
-        Develop and deploy fully functional architecture and tools to the AWS cloud 
-        Support the development and migration of web applications to the cloud (Ideally AWS Govcloud and/or Cloud One) 
-        Troubleshooting and problem solving across different application domains and platforms.
-        Pre-deployment acceptance testing.
-        Carry out and/or oversee critical system security testing.
-        Analyze and provide recommendations for architecture and process improvements.
-        Deployment of metrics, logging, and monitoring systems on AWS platform.
-        Design, maintenance and management tools for automation of different operational processes.
-        Participates in projects as a team member and/or team project leader.
-        Coordinates activities with the Manager of Engineering.
-        Manages approved project timelines. Produces periodic project status reports comparing actual to forecasted timeline.
-        Writes detailed technical reports to document information related to the understanding of relevant failure modes and the results of reliability analyses, prepares proposals & develops work instructions. Prepares and delivers presentations of analysis results to appropriate staff and customers.
-        Carries out special duties as assigned.
-        Performs other related duties as assigned.
+        The Software Engineering Intern will be a passionate, opinionated and creative individual who can develop web applications from the ground up. You will understand web strengths and constraints and build pixel perfect solutions. You should be capable, and willing, to assist in developing responsive single-page web applications.
+
+        Develop efficient, secure applications, peer-review code, and document solutions within an agile-blended software environment
+        Collaborate with other senior engineers, and management, to achieve optimal application design
+        Communicate proactively with teammates, infrastructure, security, and quality assurance to continuously improve processes and engineering excellence
+        Work on Web based applications and Services utilizing Java, Spring, Hibernate, AngularJS and Java Script.
+        Learn quickly and be productive in a highly collaborative, lightning-fast environment.
+        Follow and Promote best practices in Software Development
+        Experience developing cutting edge applications
+        Experience designing and building single page applications using any Javascript Framework.
+        Knowledge in at least one client side MVC JavaScript framework (preferably ReactJS or ReactNative)
+        Experience developing modular front-end components and building web experiences using HTML5, CSS3, JavaScript
+        Knowledge of web standards, cross-browser compatibility and constraints of the web
+        Understanding of browser rendering behavior and performance
+        Good written and communication skills
+        Experience with Agile methodologies
+        Completed Bachelor's Degree in Computer Science
         """
         
         results = checker.resCheck(
