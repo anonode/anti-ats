@@ -170,7 +170,7 @@ def register():
         else:
             create_user(username, password, email)
             flash("Registered successfully")
-            time.sleep(1)
+            time.sleep(1) # ensure user sees successful flash message
             return redirect(url_for("login"))
     
     
