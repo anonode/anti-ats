@@ -1,17 +1,26 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask_dance.contrib.google import make_google_blueprint, google
 from werkzeug.utils import secure_filename
 import os
 # our stuff
 from config import Config
 from database import *
-from scanner import *
 from ATSChecker import ATSChecker
 
 app = Flask(__name__)
 app.config.from_object(Config)
 upload_path = "/home/anti-ats/submissions/" # adjust this later
-app.secret_key = 'perfectchem1cal' # sign session cookies
+#upload_path = "C:\\Users\\roliv\\Code\\anit-ats\\submissions\\"
+app.secret_key = app.config["SECRET_KEY"] # sign session cookies
 mysql = MySQL(app)
+
+google_bp = make_google_blueprint(
+    client_id=app.config["GOOGLE_OAUTH_CLIENT_ID"],
+    client_secret=app.config["GOOGLE_OAUTH_CLIENT_SECRET"],
+    redirect_to="google_login",
+    scope=["profile", "email"]
+)
+app.register_blueprint(google_bp, url_prefix="/login")
 
 @app.route("/", methods=["GET", "POST"])
 def home():
@@ -23,7 +32,7 @@ def home():
     if request.method == "POST":
         file = request.files.get("file")
         if file:
-            if file.filename.endswith('.pdf') or file.filename.endswith('docx') or file.filename.endswith('doc'):
+            if file.filename.endswith('.pdf') or file.filename.endswith('docx') or file.filename.endswith('doc'): # avoid malicious file updloads
                 filename = secure_filename(file.filename) # no directory traversal here. removes all special characters
                 user_dir = os.path.join(upload_path, username)
                 
@@ -62,8 +71,9 @@ def results():
     
     username = session.get("username")
     
-#    file_path = "C:\\Users\\roliv\\Code\\anti-ats\\app\\RichardOlivarri.pdf"
-    file_path = "/home/rakpa/repos/CADP_Resume.pdf"
+    # MORE CODE HERE. GET THE USER'S CHOICE
+    file_path = "C:\\Users\\roliv\\Code\\anti-ats\\submissions\\RichardOlivarri.pdf"
+    #file_path = "/home/rakpa/repos/CADP_Resume.pdf"
     job_description = """ 
         Python Developer Position
         
@@ -124,6 +134,31 @@ def login():
             return redirect(url_for("login"))  
                 
     return render_template("login.html")
+
+@app.route("/google-login")
+def google_login():
+    if not google.authorized:
+        return redirect(url_for("google.login"))  # triggers OAuth flow
+
+    resp = google.get("/oauth2/v2/userinfo")
+    if not resp.ok:
+        flash("Failed to fetch user info from Google.", "error")
+        return redirect(url_for("login"))
+
+    user_info = resp.json()
+    email = user_info["email"]
+    username = user_info["name"]
+
+    user = get_user_by_email(email)
+    if not user: # check if user exists before proceeding. create user if they don't exist already
+        create_user(username=username, password=None, email=email)
+        user = get_user_by_email(email)
+    
+    user_id = user[0] # Log the user in
+    session["user_id"] = user_id
+    session["username"] = username
+    flash("Logged in successfully with Google", "success")
+    return redirect(url_for("home"))
 
 
 @app.route("/register", methods = ["GET", "POST"])

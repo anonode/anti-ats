@@ -434,51 +434,6 @@ p a:hover {
     color: rgb(0, 0, 0);
 }
 
-.google-container {
-    margin-top: 20px;
-    border-style: groove;
-    display: flex;
-    align-items: center;  /* Vertically align the items */
-    justify-content: center;  /* Horizontally center the items */
-}
-
-.google-container button {
-    background-color: #FADA5E; /* Golden color */
-    color: black;
-    border: 2px solid black;
-    padding: 12px 20px;
-    font-size: 18px;
-    border-radius: 25px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 10px 0;
-    width: 100%;
-    transition: 0.3s;
-}
-
-.google-container button:hover {
-    background-color: #f5f5f5; /* Light gray hover effect */
-}
-
-/* Google Logo inside the Button */
-.google-container img {
-    height: 20px;
-    margin-right: 10px;
-}
-
-/* Make sure the h2 text is centered and aligned properly */
-.google-container h2 {
-    margin: 0;  /* Remove default margins for perfect alignment */
-    font-size: 16px;
-}
-
-
-.how-it-works {
-    margin-top: 50px; /* Adjust as needed */
-}
-
 
 .results-layout {
     display: flex;
@@ -651,4 +606,61 @@ a {
 
 a:hover {
     color: #0056b3;
+}
+
+.google-container button {
+    background-color: #FADA5E; /* Golden color */
+    color: black;
+    border: 2px solid black;
+    padding: 12px 20px;
+    font-size: 18px;
+    border-radius: 25px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+    width: 100%;
+    transition: 0.3s;
+}
+
+.google-container button:hover {
+    background-color: #E5C100;
+}
+
+.google-container img {
+    height: 20px;
+    margin-right: 10px;
+}
+
+.google-container h2 {
+    margin: 0;  /* Remove default margins for perfect alignment */
+    font-size: 16px;
+}
+
+.google-btn {
+    display: flex;
+    align-items: center;
+    background-color: #FADA5E; /* Golden color */
+    color: black;
+    border: 2px solid black;
+    padding: 12px 20px;
+    font-size: 18px;
+    border-radius: 25px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+    width: 100%;
+    transition: 0.3s;
+}
+
+.google-btn img.google-logo {
+    width: 20px;
+    margin-right: 10px;
+}
+
+.google-btn:hover {
+    background-color: #E5C100;
 }
