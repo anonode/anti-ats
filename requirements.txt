@@ -17,6 +17,7 @@ Flask==3.1.0
 Flask-Dance==7.1.0
 Flask-MySQLdb==2.0.0
 fsspec==2025.3.2
+huggingface-hub==0.30.2
 idna==3.10
 importlib_metadata==8.6.1
 importlib_resources==6.5.2
@@ -44,10 +45,12 @@ Pygments==2.19.1
 PyMuPDF==1.25.5
 pyphen==0.17.2
 python-dateutil==2.9.0.post0
+PyYAML==6.0.2
 regex==2024.11.6
 requests==2.32.3
 requests-oauthlib==2.0.0
 rich==14.0.0
+safetensors==0.5.3
 scikit-learn==1.6.1
 scipy==1.15.2
 setuptools==78.1.0
@@ -62,8 +65,10 @@ sympy==1.13.3
 textstat==0.7.5
 thinc==8.3.6
 threadpoolctl==3.6.0
+tokenizers==0.21.1
 torch==2.7.0
 tqdm==4.67.1
+transformers==4.51.3
 typer==0.15.2
 typing-inspection==0.4.0
 typing_extensions==4.13.1
