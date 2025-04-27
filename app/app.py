@@ -48,6 +48,9 @@ def home():
             else:
                 flash('Invalid file type', 'error')
                 return redirect(url_for("home"))
+        else:
+            flash(f"No file submitted. Do not make empty POST requests. Illegal.", 'error')
+            return redirect(url_for('home'))
     
     return render_template("index.html", files=files)
 
@@ -123,7 +126,13 @@ def login():
                 
     return render_template("login.html")
 
-@app.route("/google-login")
+@app.route("/logout", methods = ["GET"])
+def logout():
+    if request.method == "GET":
+        pass #log the user out
+    return redirect(url_for("login"))
+
+@app.route("/google-login", methods=["GET", "POST"])
 def google_login():
     if not google.authorized:
         return redirect(url_for("google.login"))  # triggers OAuth flow
@@ -151,7 +160,6 @@ def google_login():
 
 @app.route("/register", methods = ["GET", "POST"])
 def register():
-    
     if request.method == "POST":
         email = request.form.get("email")
         username = request.form.get("username")
@@ -177,10 +185,6 @@ def register():
     return render_template("register.html") # redirect to register.html with HTTP Redirect and implicit GET request
 
 
-
-
-
-
 ######## Obligatory #########
 
 @app.route("/faq", methods = ["GET"])
@@ -194,7 +198,6 @@ def howitworks():
 @app.route("/about", methods = ["GET"])
 def about():
     return render_template("about.html")
-
 
 
 if __name__== '__main__':

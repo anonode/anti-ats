@@ -6,6 +6,7 @@ import os
 mysql = MySQL()
 # TODO: add doc strings to all functions for clarity, readability, and makesenseinthefutureability
 
+#### CREATE
 def create_user(username, password, email) -> bool:
     print(f"email: {email}\nusername: {username}\npassword: {password}")
     cur = mysql.connection.cursor()
@@ -14,6 +15,8 @@ def create_user(username, password, email) -> bool:
     mysql.connection.commit()
     cur.close()
     return True
+
+#### READ
 
 def get_user_by_username(username):
     cursor = mysql.connection.cursor()
@@ -33,13 +36,26 @@ def get_user_files(username):
     user_folder = os.path.join('/home/anti-ats/submissions', username)
     
     if os.path.exists(user_folder):
-        files = [f for f in os.listdir(user_folder) if os.path.isfile(os.path.join(user_folder, f))]
-        
+        files = [f for f in os.listdir(user_folder) if os.path.isfile(os.path.join(user_folder, f))] # make sure to only grab files, not subdirectories
         file_paths = [os.path.join(user_folder, f) for f in files]
-        
         return file_paths
     else:
         return None
 
 def validate_user_password(stored_password, input_password):
     return check_password_hash(stored_password, input_password)
+
+#### DELETE
+def remove_user(username):
+    files = get_user_files(username)
+    if files:
+        for file in files:
+            os.remove(file)
+        os.rmdir(f"/home/anti-ats/submissions/{username}/")
+    cursor = mysql.connection.cursor()
+    query = f"DELETE users WHERE username = {username}"
+    cursor.execute(query)
+    cursor.close()
+    return True
+
+#### UPDATE

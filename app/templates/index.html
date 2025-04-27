@@ -11,52 +11,52 @@
     <div class="navbar">
         <a href="{{ url_for('about') }}"><img src="{{ url_for('static', filename='logo.png') }}" alt="Anti-ATS Logo"></a>
         <div class="navbar-links">
+            <a href="{{ url_for('results') }}">Scan Results</a>
             <a href="{{ url_for('faq') }}">FAQs</a>
             <a href="{{ url_for('howitworks') }}">How it works</a>
-            <a href="{{ url_for('register') }}">Sign up</a>
-            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
         </div>
     </div>
 
-
-        <div class="instructions">
-            <h3>Instructions</h3>
-            <ol>
-                <li>Upload your resume.</li>
-                <li>The system scans for ATS compatibility.</li>
-                <li>Check formatting and keyword optimization.</li>
-                <li>Receive a report on ATS friendliness.</li>
-                <li>Make adjustments and re-upload.</li>
-                <li>Increase chances of passing ATS filters.</li>
-            </ol>
-            <div class="upload-container">
-                <div class="upload-box">
-                    <div id="flash-messages">
-                        {% with messages = get_flashed_messages(with_categories=true) %}
-                            {% if messages %}
-                                <ul>
-                                    {% for category, message in messages %}
-                                        <li class="{{ category }}">{{ message }}</li>
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
-                        {% endwith %}
-                    </div>
-        
-                    <form method="POST" enctype="multipart/form-data" id="upload-form">
-                        <label for="file-upload" class="custom-file-upload">
-                            <img src="{{ url_for('static', filename='paper-icon.png') }}" alt="Upload Icon" class="upload-icon">
-                            Choose Files
-                            <span class="dropdown-icon">▼</span>
-                        </label>
-                        <input id="file-upload" type="file" name="file" onchange="showSubmitButton()">
-                        <p class="file-size-text">Max File Size: 1MB</p>
-        
-                        <div class="submit-container">
-                            <button type="submit" id="submit-btn">Submit</button>
-                        </div>
-                    </form>
+    <div class="instructions">
+        <h3>Instructions</h3>
+        <ol>
+            <li>Upload your resume.</li>
+            <li>The system scans for ATS compatibility.</li>
+            <li>Check formatting and keyword optimization.</li>
+            <li>Receive a report on ATS friendliness.</li>
+            <li>Make adjustments and re-upload.</li>
+            <li>Increase chances of passing ATS filters.</li>
+        </ol>
+        <div class="upload-container">
+            <div class="upload-box">
+                <div id="flash-messages">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            <ul>
+                                {% for category, message in messages %}
+                                    <li class="{{ category }}">{{ message }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    {% endwith %}
                 </div>
+    
+                <form method="POST" enctype="multipart/form-data" id="upload-form">
+                    <label for="file-upload" class="custom-file-upload">
+                        <img src="{{ url_for('static', filename='paper-icon.png') }}" alt="Upload Icon" class="upload-icon">
+                        Choose Files
+                        <span class="dropdown-icon">▼</span>
+                    </label>
+                    <input id="file-upload" type="file" name="file" onchange="validateFile()">
+                    <p class="file-size-text">Max File Size: 1MB</p>
+    
+                    <div class="submit-container">
+                        <button type="submit" id="submit-btn" disabled>Submit</button>
+                    </div>
+                    <p id="error-message" style="display: none;"><strong>File is either too large or has an invalid extension.</strong> Please choose a valid file <strong>(.doc, .docx, .pdf) under 1MB.</strong></p>
+                </form>
+            </div>
         </div>
 
         {% if files %}
@@ -71,17 +71,41 @@
         {% else %}
             <p>You haven't uploaded any resumes yet.</p>
         {% endif %}
-
     </div>
 
     <div class="footer">
         <p>&copy; 2025 Anti-ATS. All rights reserved.</p>
     </div>
 
-    <script>
-        function showSubmitButton() {
+    
+    <script>//input validation
+        function validateFile() {
+            var fileInput = document.getElementById("file-upload");
             var submitBtn = document.getElementById("submit-btn");
-            submitBtn.style.display = "block";
+            var errorMessage = document.getElementById("error-message");
+            var file = fileInput.files[0]; // recieve file
+
+            submitBtn.style.display = "inline-block"; // keep button visible, but only after a file is selected
+
+            if (file) {
+                var fileSize = file.size; // file size in bytes
+                var maxSize = 1 * 1024 * 1024;
+
+                var fileName = file.name;
+                var fileExtension = fileName.split('.').pop().toLowerCase();
+                var validExtensions = ['doc', 'docx', 'pdf'];// allowed extensions
+
+                if (validExtensions.indexOf(fileExtension) === -1) {
+                    errorMessage.style.display = "block";
+                    submitBtn.disabled = true;
+                } else if (fileSize > maxSize) {
+                    errorMessage.style.display = "block";
+                    submitBtn.disabled = true;
+                } else {
+                    errorMessage.style.display = "none";
+                    submitBtn.disabled = false;
+                }
+            }
         }
     </script>
 
