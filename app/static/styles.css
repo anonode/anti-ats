@@ -187,13 +187,12 @@ body {
     text-align: center;
     width: 80%;
     position: relative;
-    top: -100px; /* Moves the container up */
     max-width: 1000px;
 }
 
 .about-container h1 {
     font-size: 36px;
-    color: #1a2533;
+    color: #ffffff;
 }
 
 .about-container p {
@@ -275,7 +274,7 @@ h2 {
     border-radius: 15px;
     box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
-    border: 2px dotted #000;
+    border: 2px solid #000;
     position: absolute;
     top: 50%;                   /* Push down from top */
     left: 50%;                  /* Push from left */
