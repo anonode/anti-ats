@@ -129,7 +129,7 @@ def login():
 @app.route("/logout", methods = ["GET"])
 def logout():
     if request.method == "GET":
-        pass #log the user out
+        session.clear()
     return redirect(url_for("login"))
 
 @app.route("/google-login", methods=["GET", "POST"])
