@@ -132,13 +132,16 @@ def logout():
         session.clear()
     return redirect(url_for("login"))
 
-@app.route("/google-login", methods=["GET", "POST"])
+@app.route("/login/google_login", methods=["GET", "POST"])
 def google_login():
     if not google.authorized:
+        print("Google OAuth not yet complete. Redirecting to login...")
         return redirect(url_for("google.login"))  # triggers OAuth flow
 
     resp = google.get("/oauth2/v2/userinfo")
+    print("Google OAuth successful. Fetching user info...")
     if not resp.ok:
+        print("Failed to fetch user into from Google")
         flash("Failed to fetch user info from Google.", "error")
         return redirect(url_for("login"))
 
@@ -201,6 +204,9 @@ def about():
 
 
 if __name__== '__main__':
-    app.run(debug=True)
+    base = os.path.abspath(os.path.dirname(__file__)) # portability
+    cert = os.path.join(base, 'cert.pem')
+    key = os.path.join(base, 'key.pem')
+    app.run(debug=True, ssl_context=(cert, key))
     # default port is 5000
     # app.run(port=<port>) to change port number

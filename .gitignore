@@ -3,3 +3,4 @@ stuff/
 __pycache__/
 app/config.py
 submissions/
+app/*.pem
