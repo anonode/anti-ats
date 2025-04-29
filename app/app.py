@@ -251,7 +251,17 @@ def submissions():
         return redirect(url_for('login'))
     
     username = session.get('username')
-    resumes = get_user_files(username)
+    folder = f'/home/anti-ats/submissions/{username}/'
+    resumes = []
+    files = get_user_files(username)
+    for file in files:
+        full_path = os.path.join(folder, file)
+        if os.path.isfile(full_path):
+            resumes.append({
+                "name": os.path.basename(file),
+                "path": full_path,
+                "upload_date": datetime.fromtimestamp(os.path.getmtime(full_path)).strftime('%Y-%m-%d %I:%M:%S %p')
+            })
     
     return render_template('submissions.html', username=username, resumes=resumes)
 
