@@ -31,6 +31,8 @@ And then activate it with:
 
 Once the virtual environment is activated, install the required dependencies with `pip install -r requirements.txt`
 
+- `python -m nltk.downloader stopwords`
+- `python -m nltk.downloader punkt_tab`
 
 To run the project, enter `python app.py`
 
