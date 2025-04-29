@@ -37,7 +37,7 @@
         </form>
 
         <div class="google-container">
-            <a href="{{ url_for('oauth2_authorize', provider='google') }}">
+            <a href="{{ url_for('google_login') }}">
                 <button class="google-btn">
                     <img src="{{ url_for('static', filename='google.jpeg') }}" alt="Google Logo" class="google-logo">
                     <span>Login with Google</span>

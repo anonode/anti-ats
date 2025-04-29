@@ -64,7 +64,7 @@
                 <h3>Your Previous Submissions:</h3>
                 <ul>
                     {% for file in files %}
-                        <li>{{ file.filename }}</li>
+                        <li>{{ file.split('/')[-1] }}</li>
                     {% endfor %}
                 </ul>
             </div>

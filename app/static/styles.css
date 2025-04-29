@@ -727,3 +727,33 @@ a:hover {
 #error-message {
     color: rgba(255, 0, 0, 0.729);
 }        
+
+.uploaded-container {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    max-width: 600px;
+}
+.uploaded-container h3 {
+    margin-bottom: 15px;
+    font-family: Arial, sans-serif;
+    color: #333;
+}
+.uploaded-container ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.uploaded-container li {
+    background: white;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 15px;
+    color: #555;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05)
+}
