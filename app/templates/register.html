@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='registration.css') }}">
 </head>
 <body>
     <div class="navbar">
@@ -31,10 +32,27 @@
             {% endwith %}
         </div>
         <form method="POST" action="{{ url_for('register') }}">
-            <input type="text" name="email" placeholder="email" required><br>
-            <input type="text" name="username" placeholder="username" required><br>
-            <input type="password" name="password" placeholder="password" required><br>
-            <input type="password" name="confirmed_password" placeholder="Confirmed Password" required><br>
+            <div class="email-wrapper">
+                <input type="email" id="email" name="email" placeholder="Email" required>
+            </div>
+            <small id="email-help" class="help-text"></small><br>
+
+            <div class="password-wrapper">
+                <input type="password" id="password" name="password"
+                       placeholder="Password" required
+                       pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d]).{8,}$"
+                       title="Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.">
+                <span toggle="#password" class="toggle-password">👁</span>
+            </div>
+            <small id="password-help" class="help-text"></small><br>
+
+            <div class="password-wrapper">
+                <input type="password" id="confirm-password" name="confirmed_password"
+                       placeholder="Confirm Password" required>
+                <span toggle="#confirm-password" class="toggle-password">👁</span>
+            </div>
+            <small id="match-help" class="help-text"></small><br>
+
             <button type="submit">Register</button>
         </form>
     </div>
@@ -42,5 +60,105 @@
     <div class="footer">
         <p>&copy; 2025 Anti-ATS. All rights reserved.</p>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const password = document.getElementById('password');
+            const confirm = document.getElementById('confirm-password');
+            const emailInput = document.getElementById('email');
+            const emailHelp = document.getElementById('email-help');
+            const passwordHelp = document.getElementById('password-help');
+            const matchHelp = document.getElementById('match-help');
+            const form = document.querySelector('form');
+        
+            const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        
+            function validatePassword() {
+                if (password.value === "") {
+                    passwordHelp.textContent = "";
+                    return false;
+                }
+        
+                if (strongPasswordRegex.test(password.value)) {
+                    passwordHelp.textContent = "Strong password ✔";
+                    passwordHelp.className = "help-text valid-text";
+                    return true;
+                } else {
+                    passwordHelp.textContent = "Password must be 8+ chars, include uppercase, lowercase, number, and symbol.";
+                    passwordHelp.className = "help-text invalid-text";
+                    return false;
+                }
+            }
+        
+            function validateMatch() {
+                if (confirm.value === "") {
+                    matchHelp.textContent = "";
+                    return false;
+                }
+        
+                if (password.value === confirm.value) {
+                    matchHelp.textContent = "Passwords match ✔";
+                    matchHelp.className = "help-text valid-text";
+                    return true;
+                } else {
+                    matchHelp.textContent = "Passwords do not match.";
+                    matchHelp.className = "help-text invalid-text";
+                    return false;
+                }
+            }
+        
+            function validateEmail() {
+                const email = emailInput.value;
+        
+                if (email === "") {
+                    emailHelp.textContent = "";
+                    return false;
+                }
+        
+                if (emailRegex.test(email)) {
+                    emailHelp.textContent = "Valid email ✔";
+                    emailHelp.className = "help-text valid-text";
+                    return true;
+                } else {
+                    emailHelp.textContent = "Please enter a valid email address.";
+                    emailHelp.className = "help-text invalid-text";
+                    return false;
+                }
+            }
+        
+            // Validate fields on input
+            password.addEventListener('input', validatePassword);
+            confirm.addEventListener('input', validateMatch);
+            emailInput.addEventListener('input', validateEmail);
+        
+            // Form submission validation
+            form.addEventListener('submit', function (event) {
+                const isEmailValid = validateEmail();
+                const isPasswordValid = validatePassword();
+                const isPasswordMatchValid = validateMatch();
+        
+                // If any of the fields is invalid, prevent submission
+                if (!isEmailValid || !isPasswordValid || !isPasswordMatchValid) {
+                    event.preventDefault(); // Prevent form submission
+                    alert('Please correct the errors before submitting!');
+                }
+            });
+        
+            // Toggle password visibility
+            document.querySelectorAll('.toggle-password').forEach(icon => {
+                icon.addEventListener('click', function () {
+                    const input = document.querySelector(this.getAttribute('toggle'));
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        this.textContent = '🙈';
+                    } else {
+                        input.type = 'password';
+                        this.textContent = '👁';
+                    }
+                });
+            });
+        });        
+    </script>
 </body>
 </html>
