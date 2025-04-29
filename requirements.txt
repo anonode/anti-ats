@@ -19,6 +19,7 @@ Flask-Dance==7.1.0
 Flask-Login==0.6.3
 Flask-MySQLdb==2.0.0
 fsspec==2025.3.2
+fuzzywuzzy==0.18.0
 greenlet==3.2.1
 huggingface-hub==0.30.2
 idna==3.10
