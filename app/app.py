@@ -1,11 +1,16 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session, current_app, request
+from flask import Flask, render_template, request, redirect, url_for, flash, session, request, send_file
 from flask_dance.contrib.google import make_google_blueprint, google
 from werkzeug.utils import secure_filename
 import os, time
+from datetime import datetime
+from pathlib import Path
+import json
+import uuid
+from io import BytesIO
 # our stuff
 from config import Config
 from database import *
-from ATSChecker import ATSChecker
+from ATSChecker import analyze_resume
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -55,51 +60,6 @@ def home():
     return render_template("index.html", files=files)
 
 
-@app.route("/submissions", methods = ["GET", "POST"])
-def submissions():
-    if "user_id" not in session:
-        return redirect(url_for('login'))
-    
-    username = session.get("username")
-    
-    # MORE CODE HERE. GET THE USER'S CHOICE
-    file_path = "C:\\Users\\roliv\\Code\\anti-ats\\submissions\\RichardOlivarri.pdf"
-    #file_path = "/home/rakpa/repos/CADP_Resume.pdf"
-    job_description = """ 
-        Python Developer Position
-        
-        Requirements:
-        Bachelor Degree in Computer Science, Software engineering, or equivalent.
-        Strong planning, organizational, analytical, interpersonal, decision making, oral and written communication skills strongly preferred. 
-        Software development experience is a must. C# or Python experience is preferred.
-        Database experience (Postgres, MySql, etc ) is preferred.
-        Familiarity with DOD Software practices, systems, and publications is helpful.
-        Thorough knowledge of MS Office product suite (Excel, Access, Word, PowerPoint).
-        Ability to understand company instruction, company process and quality manuals.
-        Must be a US Citizen. Make this into a single sentence for me
-        
-        Responsibilities:
-        Develop cloud hosted applications 
-        Provide support to the deployment, automation, management, and maintenance of AWS production applications.
-        Develop and deploy fully functional architecture and tools to the AWS cloud 
-        Support the development and migration of web applications to the cloud (Ideally AWS Govcloud and/or Cloud One) 
-        Troubleshooting and problem solving across different application domains and platforms.
-        Pre-deployment acceptance testing.
-        Carry out and/or oversee critical system security testing.
-        Analyze and provide recommendations for architecture and process improvements.
-        Deployment of metrics, logging, and monitoring systems on AWS platform.
-        Design, maintenance and management tools for automation of different operational processes.
-        Participates in projects as a team member and/or team project leader.
-        Coordinates activities with the Manager of Engineering.
-        Manages approved project timelines. Produces periodic project status reports comparing actual to forecasted timeline.
-        Writes detailed technical reports to document information related to the understanding of relevant failure modes and the results of reliability analyses, prepares proposals & develops work instructions. Prepares and delivers presentations of analysis results to appropriate staff and customers.
-        Carries out special duties as assigned.
-        Performs other related duties as assigned.
-        """
-    
-    checker = ATSChecker()
-    ats_data = checker.resCheck(file_path=file_path, jobDesc=job_description, file_type="pdf", job_type="technical")    
-    return render_template("results.html", ats_data=ats_data, username=username)
 
 @app.route("/login", methods = ["GET", "POST"])
 def login():
@@ -187,6 +147,124 @@ def register():
     
     return render_template("register.html") # redirect to register.html with HTTP Redirect and implicit GET request
 
+
+###### RESUME
+
+@app.route('/dashboard')
+def dashboard():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    username = session.get('username')
+    resumes = get_user_files(username)
+    
+    return render_template('dashboard.html', username=username, resumes=resumes)
+
+
+@app.route('/scan_resume', methods=['POST'])
+def scan_resume():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    # Get form data
+    selected_resume = request.form.get('selected_resume')
+    job_description = request.form.get('job_description')
+    job_type = request.form.get('job_type', 'technical')
+    
+    # Validate inputs
+    if not selected_resume or not job_description:
+        flash('Please select a resume and provide a job description.')
+        return redirect(url_for('submissions'))
+    
+    # Determine file type
+    file_type = 'pdf' if selected_resume.lower().endswith('.pdf') else 'docx'
+    
+    try:
+        # Process the resume using our modified function
+        results = analyze_resume(
+            resume_path=selected_resume,
+            job_description=job_description,
+            file_type=file_type,
+            job_type=job_type
+        )
+        
+        # Check if analysis was successful
+        if not results['success']:
+            flash(f"Error analyzing resume: {results['error']['message']}")
+            return redirect(url_for('submissions'))
+        
+        # Store results in session for potential future use
+        session['last_scan_results'] = results
+        
+        # Pass the actual results to the template
+        return render_template('results.html', 
+                              results=results['results'], 
+                              username=session.get('username'))
+        
+    except Exception as e:
+        flash(f"An error occurred: {str(e)}")
+        return redirect(url_for('submissions'))
+
+
+@app.route('/download_report')
+def download_report():
+    if 'user_id' not in session or 'last_scan_results' not in session:
+        return redirect(url_for('submissions'))
+    
+    results = session['last_scan_results']
+    
+    # Format the results as a text file
+    report_text = f"""ATS SCAN RESULTS
+====================
+
+FILE: {results['results']['metadata']['file_name']}
+SCAN DATE: {results['results']['metadata']['timestamp']}
+
+OVERALL SCORE: {results['results']['summary']['overall_score']}%
+
+DETAILED SCORES:
+- Keyword Match: {results['results']['summary']['keyword_match']}%
+- Skill Match: {results['results']['summary']['skill_match']}%
+- Readability: {results['results']['summary']['readability']}%
+
+MATCHED SKILLS:
+{chr(10).join(['- ' + skill for skill in results['results']['skills']['matched']])}
+
+MISSING SKILLS:
+{chr(10).join(['- ' + skill for skill in results['results']['skills']['missing']])}
+
+READABILITY METRICS:
+- Average Sentence Length: {results['results']['readability_metrics']['avg_sentence_length']} words
+- Complex Word Ratio: {results['results']['readability_metrics']['complex_word_ratio'] * 100:.2f}%
+
+GENERATED BY ANTI-ATS RESUME SCANNER
+© 2025 Anti-ATS
+"""
+    
+    # Create a BytesIO object
+    buffer = BytesIO()
+    buffer.write(report_text.encode('utf-8'))
+    buffer.seek(0)
+    
+    # Generate a filename with the resume name and current date
+    filename = f"ATS_Scan_{results['results']['metadata']['file_name']}_{datetime.now().strftime('%Y%m%d')}.txt"
+    
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name=filename,
+        mimetype='text/plain'
+    )
+
+@app.route('/submissions')
+def submissions():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    username = session.get('username')
+    resumes = get_user_files(username)
+    
+    return render_template('submissions.html', username=username, resumes=resumes)
 
 
 ######## Obligatory #########
