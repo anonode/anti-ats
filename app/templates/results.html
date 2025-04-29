@@ -41,6 +41,7 @@
             <a href="{{ url_for('home') }}">Home</a>
             <a href="{{ url_for('faq') }}">FAQs</a>
             <a href="{{ url_for('howitworks') }}">How it works</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
         </div>
     </div>
 
@@ -86,7 +87,7 @@
                                 {% endfor %}
                             </ul>
                         {% else %}
-                            <p>No missing skills detected.</p>
+                            <p>No missing skills detected. <strong>Good job!</strong></p>
                         {% endif %}
                     </div>
                 </div>
