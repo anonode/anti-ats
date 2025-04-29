@@ -264,6 +264,29 @@ def submissions():
             })
     
     return render_template('submissions.html', username=username, resumes=resumes)
+    
+@app.route('/delete_resume', methods=['POST'])
+def delete_resume():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    username = session.get('username')
+    filename = request.form.get('filename')
+
+    if not filename:
+        flash("No file specified for deletion.", "error")
+        return redirect(url_for('home'))
+
+    user_dir = os.path.join(upload_path, username)
+    file_path = os.path.join(user_dir, filename)
+
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        flash(f"File '{filename}' deleted successfully.", "success")
+    else:
+        flash(f"File '{filename}' not found.", "error")
+
+    return redirect(url_for('home'))
 
 
 ######## Obligatory #########

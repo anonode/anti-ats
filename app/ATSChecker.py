@@ -38,7 +38,11 @@ class TextPreprocessor:
         return ' '.join(words) # Join all words back together into single string
     
     def extract_sentences(self, text: str) -> list[str]:
-        sentences = nltk.tokenize.sent_tokenize(text)
+        cleanSentences = re.sub(r"[•\u2022]", ".", text)
+        
+        dirty_sentences = nltk.tokenize.sent_tokenize(cleanSentences)
+        sentences = [s.strip() for s in dirty_sentences if s.strip()]
+        
         sentence_embeddings = []
 
         for sentence in sentences:
@@ -808,4 +812,3 @@ def analyze_resume(resume_path: str, job_description: str, file_type: str = "pdf
         file_type=file_type,
         job_type=job_type
     )
-
