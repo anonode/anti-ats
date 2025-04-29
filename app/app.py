@@ -55,8 +55,8 @@ def home():
     return render_template("index.html", files=files)
 
 
-@app.route("/results", methods = ["GET", "POST"])
-def results():
+@app.route("/submissions", methods = ["GET", "POST"])
+def submissions():
     if "user_id" not in session:
         return redirect(url_for('login'))
     
