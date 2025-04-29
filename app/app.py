@@ -166,7 +166,7 @@ def scan_resume():
         return redirect(url_for('submissions'))
     
     # Determine file type
-    file_type = 'pdf' if selected_resume.lower().endswith('.pdf') else 'docx'
+    file_type = 'pdf' if selected_resume.lower().endswith('.pdf') else 'docx' if selected.resume.lower().endswith('.docx') else 'doc'
     
     try:
         # Process the resume using our modified function

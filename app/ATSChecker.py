@@ -128,11 +128,76 @@ class SkillMatcher:
     def __init__(self, preprocessor: TextPreprocessor):
         self.preprocessor = preprocessor
         self.sample_skills = { # Provides list of common skills for quicker recognition
-            'python', 'java', 'javascript', 'c++', 'ruby', 'php', 'sql',
-            'html', 'css', 'aws', 'azure', 'docker', 'kubernetes', 'linux',
-            'windows', 'git', 'agile', 'scrum', 'ci/cd', 'rest', 'api',
-            'machine learning', 'artificial intelligence', 'data science',
-            'data analysis', 'cloud computing', 'database', 'nodejs'
+            # Programming Languages
+            'python', 'java', 'javascript', 'typescript', 'c', 'c++', 'c#', 'ruby', 'php', 'go', 'golang',
+            'rust', 'kotlin', 'swift', 'objective-c', 'perl', 'scala', 'r', 'matlab', 'bash', 'powershell',
+            'groovy', 'dart', 'fortran', 'cobol', 'haskell', 'lisp', 'lua', 'erlang', 'clojure', 'f#',
+            
+            # Web Development
+            'html', 'css', 'sass', 'scss', 'less', 'bootstrap', 'tailwind', 'html5', 'css3', 'jquery',
+            
+            # JavaScript Frameworks/Libraries
+            'react', 'angular', 'vue', 'svelte', 'ember', 'backbone', 'next.js', 'nuxt.js', 'node.js', 'nodejs',
+            'express', 'nestjs', 'redux', 'mobx', 'jquery', 'react native', 'electron',
+            
+            # Back-end Frameworks
+            'django', 'flask', 'fastapi', 'spring', 'spring boot', 'hibernate', 'laravel', 'symfony', 'rails',
+            'asp.net', '.net core', '.net', 'struts', 'play framework',
+            
+            # Databases
+            'sql', 'mysql', 'postgresql', 'sqlite', 'oracle', 'sql server', 'mongodb', 'dynamodb',
+            'cassandra', 'redis', 'memcached', 'elasticsearch', 'neo4j', 'couchdb', 'mariadb',
+            'firebase', 'cosmosdb', 'nosql', 'no sql',
+            
+            # Cloud Platforms
+            'aws', 'amazon web services', 'azure', 'microsoft azure', 'google cloud', 'gcp', 'heroku',
+            'digital ocean', 'ibm cloud', 'openstack', 'alibaba cloud', 'oracle cloud',
+            
+            # DevOps & Tools
+            'docker', 'kubernetes', 'k8s', 'jenkins', 'gitlab ci', 'github actions', 'travis ci',
+            'terraform', 'ansible', 'puppet', 'chef', 'prometheus', 'grafana', 'elk stack',
+            'ci/cd', 'cicd', 'continuous integration', 'continuous deployment', 'continuous delivery',
+            
+            # Operating Systems
+            'linux', 'unix', 'windows', 'macos', 'ios', 'android', 'ubuntu', 'debian', 'centos',
+            'red hat', 'fedora', 'opensuse',
+            
+            # Version Control
+            'git', 'github', 'gitlab', 'bitbucket', 'svn', 'mercurial', 'perforce',
+            
+            # APIs & Services
+            'rest', 'restful', 'soap', 'graphql', 'gql', 'grpc', 'api gateway', 'swagger', 'openapi',
+            'api', 'apis', 'microservices', 'service mesh', 'serverless',
+            
+            # Data Processing & Analytics
+            'kafka', 'rabbitmq', 'apache spark', 'hadoop', 'hive', 'pig', 'flink', 'nifi', 'airflow',
+            'etl', 'data pipeline', 'data warehouse', 'data lake', 'big data',
+            
+            # Machine Learning & AI
+            'machine learning', 'deep learning', 'neural networks', 'tensorflow', 'pytorch', 'keras',
+            'scikit-learn', 'opencv', 'nlp', 'computer vision', 'artificial intelligence', 'ai',
+            'ml', 'data science', 'natural language processing',
+            
+            # Software Development Methodologies
+            'agile', 'scrum', 'kanban', 'waterfall', 'xp', 'lean', 'devops', 'tdd', 'bdd',
+            
+            # Testing
+            'unit testing', 'integration testing', 'e2e testing', 'selenium', 'cypress', 'jest',
+            'mocha', 'chai', 'junit', 'testng', 'pytest', 'jasmine', 'karma',
+            
+            # Security
+            'cybersecurity', 'infosec', 'penetration testing', 'encryption', 'oauth', 'jwt',
+            'authentication', 'authorization', 'iam', 'sso', 'saml', 'ldap', 'pki',
+            
+            # Architecture Patterns
+            'microservices', 'monolith', 'soa', 'event driven', 'event-driven', 'cqrs', 'ddd',
+            'mvp', 'mvc', 'mvvm', 'domain driven design',
+            
+            # Others
+            'blockchain', 'iot', 'web3', 'augmented reality', 'virtual reality', 'ar', 'vr',
+            'cloud computing', 'edge computing', 'distributed systems', 'parallel computing',
+            'high performance computing', 'cryptography', 'quantum computing',
+            'telemetry', 'ci / cd', 'sdlc', 'event driven architecture'
         }
         
     def skillExtractor(self, text: str) -> set[str]:
@@ -412,7 +477,7 @@ def analyze_resume(resume_path: str, job_description: str, file_type: str = "pdf
     Args:
         resume_path (str): Path to the resume file
         job_description (str): Job description text
-        file_type (str, optional): Type of resume file ('pdf' or 'docx'). Defaults to "pdf".
+        file_type (str, optional): Type of resume file ('pdf' or 'docx' or 'doc'). Defaults to "pdf".
         job_type (str, optional): Type of job ('technical', 'management', or 'general'). Defaults to "technical".
         
     Returns:
@@ -426,59 +491,3 @@ def analyze_resume(resume_path: str, job_description: str, file_type: str = "pdf
         job_type=job_type
     )
 
-
-# Can be used if you want to maintain the original functionality, 
-# but with results returned as a JSON string instead of printing
-def main():
-    try:
-        checker = ATSChecker()
-        
-        # Both variables below are for testing and should be changed to user input
-        resume_path = "/home/anti-ats/anti-ats/app/RichardOlivarri.pdf"
-        jobDesc = """ 
-        The Software Engineering Intern will be a passionate, opinionated and creative individual who can develop web applications from the ground up. You will understand web strengths and constraints and build pixel perfect solutions. You should be capable, and willing, to assist in developing responsive single-page web applications.
-
-        Develop efficient, secure applications, peer-review code, and document solutions within an agile-blended software environment
-        Collaborate with other senior engineers, and management, to achieve optimal application design
-        Communicate proactively with teammates, infrastructure, security, and quality assurance to continuously improve processes and engineering excellence
-        Work on Web based applications and Services utilizing Java, Spring, Hibernate, AngularJS and Java Script.
-        Learn quickly and be productive in a highly collaborative, lightning-fast environment.
-        Follow and Promote best practices in Software Development
-        Experience developing cutting edge applications
-        Experience designing and building single page applications using any Javascript Framework.
-        Knowledge in at least one client side MVC JavaScript framework (preferably ReactJS or ReactNative)
-        Experience developing modular front-end components and building web experiences using HTML5, CSS3, JavaScript
-        Knowledge of web standards, cross-browser compatibility and constraints of the web
-        Understanding of browser rendering behavior and performance
-        Good written and communication skills
-        Experience with Agile methodologies
-        Completed Bachelor's Degree in Computer Science
-        """
-        
-        results = checker.get_ats_results(
-            file_path=resume_path,
-            jobDesc=jobDesc,
-            file_type="pdf",
-            job_type="technical"
-        )
-        
-        # Convert to JSON string with nice formatting
-        json_results = json.dumps(results, indent=2)
-        print(json_results)
-        
-        return results  # Also return the results dictionary for programmatic use
-    
-    except Exception as e:
-        error_results = {
-            "success": False,
-            "error": {
-                "type": type(e).__name__,
-                "message": str(e)
-            }
-        }
-        print(json.dumps(error_results, indent=2))
-        return error_results
- 
-
-if __name__ == "__main__":
-    main()
