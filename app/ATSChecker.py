@@ -10,6 +10,7 @@ import nltk
 from nltk.corpus import stopwords
 from transformers import BertTokenizer, BertModel 
 import textstat
+import json
 
 
 class TextPreprocessor:
@@ -217,13 +218,17 @@ class ATSScorer:
             weights["readability"] * readability_metrics["score"]
         )
         
+        # Convert sets to lists for JSON serialization
+        matched_skills_list = list(rSkills.intersection(jSkills))
+        missing_skills_list = list(jSkills - rSkills)
+        
         return {
             "overall_score": round(overall_score, 2),
-            "match score": round(keyword_scores["match score"], 2),
+            "match_score": round(keyword_scores["match score"], 2),
             "skill_match": round(skill_score, 2),
             "readability": round(readability_metrics["score"], 2),
-            "matched_skills": rSkills.intersection(jSkills),
-            "missing_skills": jSkills - rSkills,
+            "matched_skills": matched_skills_list,
+            "missing_skills": missing_skills_list,
             "detailed_metrics": {
                 "kw_freq": keyword_scores["kw_freq"],
                 "avg_sentence_length": round(readability_metrics["avg_sentence_length"], 2),
@@ -293,32 +298,137 @@ class ATSChecker:
         
     def resCheck(self, file_path: str, jobDesc: str,
                     file_type: str = "pdf", job_type: str = "general") -> dict:
-            # File validation
-            if not os.path.exists(file_path):
-                raise FileNotFoundError(f"Resume file not found: {file_path}")
-            if not jobDesc:
-                raise ValueError("Job description cannot be empty")
-                
-            # Check file type then extract text
-            if file_type.lower() == "pdf":
-                resText = self.document_parser.extractPDF(file_path)
-            elif file_type.lower() == "docx":
-                resText = self.document_parser.extractDocx(file_path)
-            else:
-                raise ValueError(f"Unsupported file type: {file_type}")
-                
-            scores = self.scorer.calc_scores(resText, jobDesc, job_type)
+        """
+        Process a resume file and job description to return ATS compatibility scores as a dictionary.
+        
+        Args:
+            file_path (str): Path to the resume file
+            jobDesc (str): Job description text
+            file_type (str, optional): Type of resume file ('pdf' or 'docx'). Defaults to "pdf".
+            job_type (str, optional): Type of job ('technical', 'management', or 'general'). Defaults to "general".
             
-            scores["metadata"] = {
-                "timestamp": datetime.now().isoformat(),
-                "file_name": Path(file_path).name,
-                "file_type": file_type 
+        Returns:
+            dict: A dictionary containing ATS scoring results
+        """
+        # File validation
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"Resume file not found: {file_path}")
+        if not jobDesc:
+            raise ValueError("Job description cannot be empty")
+                
+        # Check file type then extract text
+        if file_type.lower() == "pdf":
+            resText = self.document_parser.extractPDF(file_path)
+        elif file_type.lower() == "docx":
+            resText = self.document_parser.extractDocx(file_path)
+        else:
+            raise ValueError(f"Unsupported file type: {file_type}")
+                
+        scores = self.scorer.calc_scores(resText, jobDesc, job_type)
+            
+        scores["metadata"] = {
+            "timestamp": datetime.now().isoformat(),
+            "file_name": Path(file_path).name,
+            "file_type": file_type 
+        }
+            
+        return scores
+    
+    def get_ats_results(self, file_path: str, jobDesc: str,
+                      file_type: str = "pdf", job_type: str = "general") -> dict:
+        """
+        Get ATS results in a structured JSON-friendly format
+        
+        Args:
+            file_path (str): Path to the resume file
+            jobDesc (str): Job description text
+            file_type (str, optional): Type of resume file ('pdf' or 'docx'). Defaults to "pdf".
+            job_type (str, optional): Type of job ('technical', 'management', or 'general'). Defaults to "general".
+            
+        Returns:
+            dict: A JSON-friendly dictionary with formatted ATS results
+        """
+        try:
+            results = self.resCheck(file_path, jobDesc, file_type, job_type)
+            
+            # Create a result structure that's formatted nicely for the user
+            formatted_results = {
+                "success": True,
+                "results": {
+                    "summary": {
+                        "overall_score": results['overall_score'],
+                        "keyword_match": results['match_score'],
+                        "skill_match": results['skill_match'],
+                        "readability": results['readability']
+                    },
+                    "skills": {
+                        "matched": results['matched_skills'],
+                        "missing": results['missing_skills']
+                    },
+                    "keywords": {
+                        "frequencies": results['detailed_metrics']['kw_freq']
+                    },
+                    "readability_metrics": {
+                        "avg_sentence_length": results['detailed_metrics']['avg_sentence_length'],
+                        "complex_word_ratio": results['detailed_metrics']['cw_ratio']
+                    },
+                    "metadata": results['metadata']
+                }
             }
             
-            return scores
+            return formatted_results
+            
+        except FileNotFoundError as e:
+            return {
+                "success": False,
+                "error": {
+                    "type": "FileNotFoundError",
+                    "message": str(e)
+                }
+            }
+        except ValueError as e:
+            return {
+                "success": False,
+                "error": {
+                    "type": "ValueError", 
+                    "message": str(e)
+                }
+            }
+        except Exception as e:
+            return {
+                "success": False,
+                "error": {
+                    "type": "Exception",
+                    "message": str(e)
+                }
+            }
 
 
+# Example usage
+def analyze_resume(resume_path: str, job_description: str, file_type: str = "pdf", job_type: str = "technical") -> dict:
+    """
+    Analyze a resume against a job description and return structured results.
+    
+    Args:
+        resume_path (str): Path to the resume file
+        job_description (str): Job description text
+        file_type (str, optional): Type of resume file ('pdf' or 'docx'). Defaults to "pdf".
+        job_type (str, optional): Type of job ('technical', 'management', or 'general'). Defaults to "technical".
+        
+    Returns:
+        dict: A dictionary containing the ATS analysis results
+    """
+    checker = ATSChecker()
+    return checker.get_ats_results(
+        file_path=resume_path,
+        jobDesc=job_description,
+        file_type=file_type,
+        job_type=job_type
+    )
 
+
+# Can be used if you want to maintain the original functionality, 
+# but with results returned as a JSON string instead of printing
 def main():
     try:
         checker = ATSChecker()
@@ -345,49 +455,30 @@ def main():
         Completed Bachelor's Degree in Computer Science
         """
         
-        results = checker.resCheck(
-            file_path = resume_path,
-            jobDesc = jobDesc,
-            file_type = "pdf",
-            job_type = "technical"
+        results = checker.get_ats_results(
+            file_path=resume_path,
+            jobDesc=jobDesc,
+            file_type="pdf",
+            job_type="technical"
         )
+        
+        # Convert to JSON string with nice formatting
+        json_results = json.dumps(results, indent=2)
+        print(json_results)
+        
+        return results  # Also return the results dictionary for programmatic use
     
-        print("===============================\nATS Scan Results \n===============================")
-        print(f"\nOverall Score: {results['overall_score']}%")
-        print("\nDetailed Scores:")
-        print(f"- Keyword Match: {results['match score']}%")
-        print(f"- Skill Match: {results['skill_match']}%")
-        print(f"- Readability: {results['readability']}%")
-        
-        print("-------------------------------\nSkill Analysis \n-------------------------------")
-        print("\nMatched Skills:")
-        for skill in results['matched_skills']:
-            print(f"✓ {skill}")
-        
-        print("\nMissing Skills:")
-        for skill in results['missing_skills']:
-            print(f"⨯ {skill}")
-        
-        print("\nKeyword Frequency:")
-        for keyword, frequency in results['detailed_metrics']['kw_freq'].items():
-            print(f"- {keyword}: {frequency:.2f}")
-        
-        print("\nReadability Metrics:")
-        print(f"- Average Sentence Length: {results['detailed_metrics']['avg_sentence_length']:.2f} words")
-        print(f"- Complex Word Ratio: {results['detailed_metrics']['cw_ratio']:.2%}")
-        
-        print("\nDocument Metadata:")
-        print(f"- File: {results['metadata']['file_name']}")
-        print(f"- Type: {results['metadata']['file_type']}")
-        print(f"- Analysis Time: {results['metadata']['timestamp']}")
-            
-    except FileNotFoundError as e:
-        print(f"\nError: Could not find resume file - {str(e)}")
-    except ValueError as e:
-        print(f"\nError: Invalid input - {str(e)}")
     except Exception as e:
-        print(f"\nAn unexpected error occurred: {str(e)}")
-        raise
+        error_results = {
+            "success": False,
+            "error": {
+                "type": type(e).__name__,
+                "message": str(e)
+            }
+        }
+        print(json.dumps(error_results, indent=2))
+        return error_results
+
 
 if __name__ == "__main__":
     main()
