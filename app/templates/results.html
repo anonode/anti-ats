@@ -6,6 +6,32 @@
     <title>ATS Scan Results</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='submissions.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        #keyword-section {
+            display: none;
+
+        }
+        .toggle-btn {
+            margin-left: 10px;
+            padding: 5px 12px;
+            font-size: 0.9rem;
+            background-color: #007bff;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .toggle-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .toggle-btn:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.4);
+        }
+    </style>
 </head>
 <body class="light-theme">
     <div class="navbar3">
@@ -65,8 +91,23 @@
                     </div>
                 </div>
 
-                <h3>Keyword Frequencies</h3>
-                <div class="keyword-section">
+                <!--BAR CHART-->
+                <div class="chart-wrapper">
+                    <canvas id="detailsChart" width="400" height="300"></canvas>
+                </div>
+
+                <h3>Readability Metrics</h3>
+                <ul>
+                    <li><strong>Average Sentence Length:</strong> {{ results.readability_metrics.avg_sentence_length }} words</li>
+                    <li><strong>Complex Word Ratio:</strong> {{ "%.2f"|format(results.readability_metrics.complex_word_ratio * 100) }}%</li>
+                </ul>
+
+                <h3>
+                    Keyword Frequencies
+                    <button id="toggle-keywords" class="toggle-btn">Show</button>
+                </h3>
+                
+                <div class="keyword-section" id="keyword-section" style="display: none;">
                     {% if results.keywords.frequencies %}
                         <ul class="keyword-list">
                             {% for keyword, frequency in results.keywords.frequencies.items() %}
@@ -76,18 +117,14 @@
                     {% else %}
                         <p>No keywords detected.</p>
                     {% endif %}
-                </div>
-
-                <h3>Readability Metrics</h3>
-                <ul>
-                    <li><strong>Average Sentence Length:</strong> {{ results.readability_metrics.avg_sentence_length }} words</li>
-                    <li><strong>Complex Word Ratio:</strong> {{ "%.2f"|format(results.readability_metrics.complex_word_ratio * 100) }}%</li>
-                </ul>
+                </div>                
+                
 
                 <p><strong>Analysis Time:</strong> {{ results.metadata.timestamp }}</p>
             </div>
         </div>
 
+        
         <div class="action-buttons">
             <a href="{{ url_for('submissions') }}" class="btn back-btn">Scan Another Resume</a>
             <a href="{{ url_for('download_report') }}" class="btn download-btn">Download Report</a>
@@ -103,10 +140,11 @@
             const ctx = document.getElementById('scoreChart').getContext('2d');
             
             // Data from Flask
-            const overallScore = {{ results.summary.overall_score }};
-            const keywordScore = {{ results.summary.keyword_match }};
-            const skillScore = {{ results.summary.skill_match }};
-            const readabilityScore = {{ results.summary.readability }};
+            const summary = {{ results.summary | tojson }};
+            const overallScore = summary.overallScore;
+            const keywordScore = summary.keyword_match;
+            const skillScore = summary.skill_match;
+            const readabilityScore = summary.readabilityScore;
             
             // Create chart
             const scoreChart = new Chart(ctx, {
@@ -164,6 +202,15 @@
                 }
             });
             
+        // Toggle keyword section
+        const toggleBtn = document.getElementById('toggle-keywords');
+        const keywordSection = document.getElementById('keyword-section');
+        toggleBtn.addEventListener('click', () => {
+            const isHidden = keywordSection.style.display === 'none';
+            keywordSection.style.display = keywordSection.style.display === 'none' ? 'block' : 'none';
+            toggleBtn.textContent = isHidden ? 'Hide' : 'Show';
+        });
+
         });
     </script>
 </body>
