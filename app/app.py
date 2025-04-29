@@ -150,17 +150,6 @@ def register():
 
 ###### RESUME
 
-@app.route('/dashboard')
-def dashboard():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-    
-    username = session.get('username')
-    resumes = get_user_files(username)
-    
-    return render_template('dashboard.html', username=username, resumes=resumes)
-
-
 @app.route('/scan_resume', methods=['POST'])
 def scan_resume():
     if 'user_id' not in session:
