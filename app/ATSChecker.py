@@ -434,7 +434,7 @@ def main():
         checker = ATSChecker()
         
         # Both variables below are for testing and should be changed to user input
-        resume_path = "/home/zay/Downloads/Izaiah Fleming Resume 2025.pdf"
+        resume_path = "/home/anti-ats/anti-ats/app/RichardOlivarri.pdf"
         jobDesc = """ 
         The Software Engineering Intern will be a passionate, opinionated and creative individual who can develop web applications from the ground up. You will understand web strengths and constraints and build pixel perfect solutions. You should be capable, and willing, to assist in developing responsive single-page web applications.
 
