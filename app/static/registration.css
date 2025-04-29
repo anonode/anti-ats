@@ -30,6 +30,9 @@ input:invalid {
     border: 2px solid red;
 }
 
+input[name="username"] {
+    width: 100%;  /* Ensures username input takes full width */
+}
 input {
     padding: 8px;
     margin-bottom: 5px;

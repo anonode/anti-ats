@@ -32,6 +32,9 @@
             {% endwith %}
         </div>
         <form method="POST" action="{{ url_for('register') }}">
+
+            <input type="text" name="username" placeholder="Username" required><br>
+            
             <div class="email-wrapper">
                 <input type="email" id="email" name="email" placeholder="Email" required>
             </div>
