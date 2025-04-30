@@ -53,9 +53,7 @@ def remove_user(username):
             os.remove(file)
         os.rmdir(f"/home/anti-ats/submissions/{username}/")
     cursor = mysql.connection.cursor()
-    query = f"DELETE users WHERE username = {username}"
-    cursor.execute(query)
+    cursor.execute("DELETE FROM users WHERE username = %s", (username,))
     cursor.close()
     return True
 
-#### UPDATE

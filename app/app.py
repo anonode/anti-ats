@@ -120,6 +120,52 @@ def google_login():
     flash("Logged in successfully with Google", "success")
     return redirect(url_for("home"))
 
+@app.route("/delete_account", methods=["GET", "POST"])
+def delete_account():
+    if "user_id" not in session:
+        return redirect(url_for('login'))
+    username = session.get("username")
+
+    if request.method == "POST":
+        # Verify password for extra security
+        password = request.form.get("password")
+        user_id = session.get("user_id")
+        
+        # Get user to verify password (unless they used OAuth)
+        user = get_user_by_username(username)
+        
+        # Check if this is a password-based account
+        if user and user[2]:  # user[2] is the password field
+            if not validate_user_password(user[2], password):
+                flash("Incorrect password. Account deletion cancelled.", "error")
+                return redirect(url_for("settings"))
+        
+        # Delete user's uploaded files from the file system
+        user_dir = os.path.join(upload_path, username)
+        if os.path.exists(user_dir):
+            try:
+                # Remove all files in the directory
+                for file in os.listdir(user_dir):
+                    file_path = os.path.join(user_dir, file)
+                    if os.path.isfile(file_path):
+                        os.remove(file_path)
+                
+                # Remove the directory itself
+                os.rmdir(user_dir)
+            except Exception as e:
+                flash(f"Error removing files: {str(e)}", "error")
+                # Continue with account deletion even if file removal fails
+        
+        # Delete user from database
+        if remove_user(username):
+            # Clear session
+            session.clear()
+            flash("Your account has been successfully deleted.", "success")
+            return redirect(url_for("login"))
+
+    
+    # GET request shows confirmation page
+    return render_template("delete_account.html", username=username)
 
 @app.route("/register", methods = ["GET", "POST"])
 def register():
