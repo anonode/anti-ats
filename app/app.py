@@ -177,12 +177,12 @@ def register():
         user = get_user_by_username(username)
         if user:
             flash(f'{username} is already taken. Please select another username', 'error')
-            return render_template(url_for("register"))
+            return redirect(url_for("register"))
 
         check_email = get_user_by_email(email)
         if check_email:
             flash(f'Already a user with this email. Please enter another email address')
-            return render_template(url_for("register"))
+            return redirect(url_for("register"))
 
         else:
             create_user(username, password, email)

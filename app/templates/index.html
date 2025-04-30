@@ -47,10 +47,6 @@
             justify-content: right;
             gap: 15px;
         }
-        body.dark-theme .instructions {
-            background-color: black;
-            color: white;
-        }
         .instructionsmove {
             display: flex;
             justify-content: center;
@@ -66,6 +62,7 @@
         <div class="navbar3-links">
             <a href="{{ url_for('submissions') }}">Submissions</a>
             <a href="{{ url_for('logout') }}">Logout</a>
+            <a href="{{ url_for('delete_account') }}">Delete Account</a>
         </div>
     </div>
 
