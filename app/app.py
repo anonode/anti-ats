@@ -254,6 +254,8 @@ def submissions():
     folder = f'/home/anti-ats/submissions/{username}/'
     resumes = []
     files = get_user_files(username)
+    if files is None: # handle case of user not having submitted any resumes yet
+        files = []
     for file in files:
         full_path = os.path.join(folder, file)
         if os.path.isfile(full_path):

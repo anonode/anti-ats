@@ -39,7 +39,6 @@ class TextPreprocessor:
     
     def extract_sentences(self, text: str) -> list[str]:
         cleanSentences = re.sub(r"[•\u2022]", ".", text)
-        
         dirty_sentences = nltk.tokenize.sent_tokenize(cleanSentences)
         sentences = [s.strip() for s in dirty_sentences if s.strip()]
         

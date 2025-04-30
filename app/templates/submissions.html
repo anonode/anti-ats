@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scan Resume Against Job Description</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='submissions.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='darkmode.css') }}">
 </head>
 <body class="light-theme">
     <div class="navbar3">
@@ -12,15 +13,14 @@
         <div class="navbar3-links">
             <span class="welcome-text">Welcome, {{ username }}</span>
             <a href="{{ url_for('home') }}">Home</a>
-            <a href="{{ url_for('faq') }}">FAQs</a>
-            <a href="{{ url_for('howitworks') }}">How it works</a>
             <a href="{{ url_for('logout') }}">Logout</a>
+            <!-- Dark mode toggle will be inserted here by the JavaScript -->
         </div>
     </div>
 
     <div class="submissions-container">
         <h2>ATS Resume Scanner</h2>
-        
+
         <form action="{{ url_for('scan_resume') }}" method="POST">
             <div class="form-section">
                 <h3>Select a Resume</h3>
@@ -35,7 +35,9 @@
                         {% endfor %}
                     </div>
                 {% else %}
-                    <p class="no-resumes">No resumes found. Please <a href="{{ url_for('upload_resume') }}">upload a resume</a> first.</p>
+                <p class="no-resumes" style="color: {% if 'dark-theme' in body_class %} #e0e0e0 {% else %} #333 {% endif %};">
+                    You don't have any resumes uploaded. Please <a href="{{ url_for('home') }}" style="color: inherit;">upload a resume</a> first.
+                </p>
                 {% endif %}
             </div>
 
@@ -71,5 +73,8 @@
     <footer class="footer">
         <p>© 2025 Anti-ATS, All Rights Reserved</p>
     </footer>
+
+    <!-- Dark mode JavaScript - add this to all pages -->
+    <script src="{{ url_for('static', filename='darkmode.js') }}"></script>
 </body>
 </html>
