@@ -52,3 +52,7 @@ Spacy Mode:
 NLTK Data:
 `python -m nltk.downloader stopwords` 
 `python -m nltk.downloader punkt`
+
+## HTTPS Support
+
+Make sure to generate your own `.pem` files and place them in the `app/` directory of this project. Flask can use self-signed certifcates to add HTTPS support to the web app.
