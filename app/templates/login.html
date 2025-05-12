@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Login</title>
+</head>
+<body>
+    <div class="navbar">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Anti-ATS Logo">
+        <div class="navbar-links">
+            <a href="{{ url_for('register') }}"><strong>Register</strong></a>
+            <a href="{{ url_for('about') }}">About</a>
+        </div>
+    </div>
+
+    <div class="login-container">
+        <h2>Login</h2>
+        <div id="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <ul>
+                        {% for category, message in messages %}
+                            <li class="{{ category }}">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+        </div>
+        <form method="POST" action="{{ url_for('login') }}">
+            <input type="text" name="username" placeholder="Username" required><br>
+            <input type="password" name="password" placeholder="Password" required><br>
+            <button type="submit">Login</button>
+        </form>
+        <!--
+        <div class="google-container">
+            <a href="{{ url_for('google_login') }}">
+                <button class="google-btn">
+                    <img src="{{ url_for('static', filename='google.jpeg') }}" alt="Google Logo" class="google-logo">
+                    <span>Login with Google</span>
+                </button>
+            </a>
+        </div>
+    </div>
+    -->
+
+</body>
+</html>

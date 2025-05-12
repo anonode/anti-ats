@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>About - Anti-ATS</title>
+</head>
+<body>
+
+    <div class="navbar">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Anti-ATS Logo">
+        <div class="navbar-links">
+            <a href="{{ url_for('register') }}">Register</a>
+            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('submissions') }}">Submissions</a>
+            <a href="{{ url_for('home') }}">Home</a>
+        </div>
+    </div>
+
+    <div class="about-container">
+        <h1>About Anti-ATS</h1>
+        <p>
+            Anti-ATS is a cutting-edge web application designed to help job seekers avoid the limitations of Applicant Tracking Systems (ATS). 
+            We provide tools to optimize your resume, ensuring it passes through ATS filters and catches the attention of hiring managers.
+        </p>
+        <p>
+            Our platform leverages industry best practices to guide users on how to craft their resumes to stand out while passing through ATS filters effectively. With our tools, you can rest assured that your resume is ATS-ready, giving you the best chance to land your dream job!
+        </p>
+        <img src="{{ url_for('static', filename='team.png') }}" alt="da crew"> 
+
+        <div class="team-section">
+            <h2>Meet Our Team</h2>
+            <p>
+                We are a passionate team of professionals dedicated to helping job seekers optimize their resumes and increase their chances of landing a job.
+            </p>
+            <div class="team-member">
+                <h3>Izaiah Fleming</h3>
+                <p>Co-Founder & CEO & Developer</p>
+            </div>
+            <div class="team-member">
+                <h3>Richard Olivarri</h3>
+                <p>Co-Founder & Developer</p>
+            </div>
+            <div class="team-member">
+                <h3>Arabella Moore</h3>
+                <p>Co-Founder & Developer</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Copyrighteded LLC vro -->
+    <div class="footer">
+        <p>&copy; 2025 Anti-ATS. All rights reserved.</p>
+    </div>
+
+</body>
+</html>

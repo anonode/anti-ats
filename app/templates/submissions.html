@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan Resume Against Job Description</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='submissions.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='darkmode.css') }}">
+</head>
+<body class="light-theme">
+    <div class="navbar3">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Anti-ATS Logo" class="logo2">
+        <div class="navbar3-links">
+            <span class="welcome-text">Welcome, {{ username }}</span>
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+            <a href="{{ url_for('delete_account') }}">Delete Account</a>
+
+            <!-- Dark mode toggle will be inserted here by the JavaScript -->
+        </div>
+    </div>
+
+    <div class="submissions-container">
+        <h2>ATS Resume Scanner</h2>
+
+        <form action="{{ url_for('scan_resume') }}" method="POST">
+            <div class="form-section">
+                <h3>Select a Resume</h3>
+                {% if resumes %}
+                    <div class="resume-selection">
+                        {% for resume in resumes %}
+                            <div class="resume-option">
+                                <input type="radio" id="resume-{{ loop.index }}" name="selected_resume" value="{{ resume.path }}" required>
+                                <label for="resume-{{ loop.index }}">{{ resume.name }}</label>
+                                <span class="resume-date">Uploaded: {{ resume.upload_date }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                <p class="no-resumes" style="color: {% if 'dark-theme' in body_class %} #e0e0e0 {% else %} #333 {% endif %};">
+                    You don't have any resumes uploaded. Please <a href="{{ url_for('home') }}" style="color: inherit;">upload a resume</a> first.
+                </p>
+                {% endif %}
+            </div>
+
+            <div class="form-section">
+                <h3>Job Description</h3>
+                <textarea name="job_description" rows="10" placeholder="Paste the job description here..." required></textarea>
+            </div>
+
+            <div class="form-section">
+                <h3>Job Type</h3>
+                <div class="job-type-selection">
+                    <div class="job-option">
+                        <input type="radio" id="job-technical" name="job_type" value="technical" checked>
+                        <label for="job-technical">Technical</label>
+                    </div>
+                    <div class="job-option">
+                        <input type="radio" id="job-management" name="job_type" value="management">
+                        <label for="job-management">Management</label>
+                    </div>
+                    <div class="job-option">
+                        <input type="radio" id="job-general" name="job_type" value="general">
+                        <label for="job-general">General</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="submit-container">
+                <button type="submit" class="scan-btn">Scan Resume</button>
+            </div>
+        </form>
+    </div>
+
+    <footer class="footer">
+        <p>© 2025 Anti-ATS, All Rights Reserved</p>
+    </footer>
+
+    <!-- Dark mode JavaScript - add this to all pages -->
+    <script src="{{ url_for('static', filename='darkmode.js') }}"></script>
+</body>
+</html>

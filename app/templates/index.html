@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anti-ATS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='submissions.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='darkmode.css') }}">
+
+    <style>
+        .file-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .file-name {
+            margin-bottom: 8px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .delete-button {
+            width: 90%;
+            padding: 6px 12px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .delete-button:hover {
+            background-color: #c0392b;
+        }
+        .navbar3 {
+            display: flex;
+            justify-content: space-between; /* Push logo left, links right */
+            align-items: center;
+            padding: 10px 20px;
+        }
+
+        .navbar3-links {
+            display: flex;
+            justify-content: right;
+            gap: 15px;
+        }
+        .instructionsmove {
+            display: flex;
+            justify-content: center;
+        }
+
+
+    </style>
+</head>
+<body>
+    
+    <div class="navbar3">
+        <a href="{{ url_for('about') }}"><img src="{{ url_for('static', filename='logo.png') }}" alt="Anti-ATS Logo" class="logo2"></a>
+        <div class="navbar3-links">
+            <a href="{{ url_for('submissions') }}">Submissions</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+            <a href="{{ url_for('delete_account') }}">Delete Account</a>
+        </div>
+    </div>
+
+    <div class="instructionsmove">
+
+        <div class="instructions">
+            <h3>Instructions</h3>
+            <ol>
+                <li>Upload your resume.</li>
+                <li>The system scans for ATS compatibility.</li>
+                <li>Check formatting and keyword optimization.</li>
+                <li>Receive a report on ATS friendliness.</li>
+                <li>Make adjustments and re-upload.</li>
+                <li>Increase chances of passing ATS filters.</li>
+            </ol>
+            <div class="upload-container">
+                <div class="upload-box">
+                    <div id="flash-messages">
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                <ul>
+                                    {% for category, message in messages %}
+                                        <li class="{{ category }}">{{ message }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+        
+                    <form method="POST" enctype="multipart/form-data" id="upload-form">
+                        <label for="file-upload" class="custom-file-upload">
+                            <img src="{{ url_for('static', filename='paper-icon.png') }}" alt="Upload Icon" class="upload-icon">
+                            Choose Files
+                            <span class="dropdown-icon">▼</span>
+                        </label>
+                        <input id="file-upload" type="file" name="file" onchange="validateFile()">
+                        <p class="file-size-text">Max File Size: 1MB</p>
+        
+                        <div class="submit-container">
+                            <button type="submit" id="submit-btn" disabled>Submit</button>
+                        </div>
+                        <p id="error-message" style="display: none;"><strong>File is either too large or has an invalid extension.</strong> Please choose a valid file <strong>(.doc, .docx, .pdf) under 1MB.</strong></p>
+                    </form>
+                </div>
+            </div>
+
+            {% if files %}
+                <div class="uploaded-container">
+                    <h3>Your Previous Submissions:</h3>
+                    <ul>
+                        {% for file in files %}
+                        <li>
+                            <div class="file-item">
+                                <span class="file-name">{{ file.split('/')[-1] }}</span>
+                                <form method="POST" action="{{ url_for('delete_resume') }}" onsubmit="return confirm('Are you sure you want to delete this file?');">
+                                    <input type="hidden" name="filename" value="{{ file }}">
+                                    <button type="submit" class="delete-button">Delete</button>
+                                </form>
+                            </div>
+                        </li>                    
+                        {% endfor %}
+                    </ul>
+                    
+                </div>
+            {% else %}
+                <p>You haven't uploaded any resumes yet.</p>
+            {% endif %}
+        
+        </div>
+    </div>
+    <div class="footer">
+        <p>&copy; 2025 Anti-ATS. All rights reserved.</p>
+    </div>
+
+    
+    <script>//input validation
+        function validateFile() {
+            var fileInput = document.getElementById("file-upload");
+            var submitBtn = document.getElementById("submit-btn");
+            var errorMessage = document.getElementById("error-message");
+            var file = fileInput.files[0]; // recieve file
+
+            submitBtn.style.display = "inline-block"; // keep button visible, but only after a file is selected
+
+            if (file) {
+                var fileSize = file.size; // file size in bytes
+                var maxSize = 1 * 1024 * 1024;
+
+                var fileName = file.name;
+                var fileExtension = fileName.split('.').pop().toLowerCase();
+                var validExtensions = ['doc', 'docx', 'pdf'];// allowed extensions
+
+                if (validExtensions.indexOf(fileExtension) === -1) {
+                    errorMessage.style.display = "block";
+                    submitBtn.disabled = true;
+                } else if (fileSize > maxSize) {
+                    errorMessage.style.display = "block";
+                    submitBtn.disabled = true;
+                } else {
+                    errorMessage.style.display = "none";
+                    submitBtn.disabled = false;
+                }
+            }
+        }
+    </script>
+    <script src="{{ url_for('static', filename='darkmode.js') }}"></script>
+</body>
+</html>
