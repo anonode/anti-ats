@@ -31,24 +31,26 @@ And then activate it with:
 
 Once the virtual environment is activated, install the required dependencies with `pip install -r requirements.txt`
 
-- `python -m nltk.downloader stopwords`
-- `python -m nltk.downloader punkt_tab`
+### Necessary imports and installs to run code below.
+
+Python Packages:
+`pip install docx2txt PyMuPDF nltk spacy`
+
+Spacy Model
+`python -m spacy download en_core_web_md`
+
+NLTK Data
+`python -m nltk.downloader stopwords`
+`python -m nltk.downloader punkt`
+
+### Running the project
 
 To run the project, enter `python app.py`
 
 The app will default to `localhost:5000` in the browser, but the port number can be changed
 
-
 To initialize the database: `mysql -u <username> -p < db.sql`
 
-### Installs for NLP Scanner
-
-Python Packages: 
-`pip install torch transformers nltk scikit-learn PyMuPDF docx2txt textstat`
-
-NLTK Data:
-`python -m nltk.downloader stopwords` 
-`python -m nltk.downloader punkt`
 
 ## HTTPS Support
 
